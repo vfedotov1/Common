@@ -42,7 +42,7 @@ EOF
 # forwarders {192.168.0.1;}; - Перенаправляем запросы, которые не резолвятся на днс сервер роутера (наш шлюз).
 
 # 5) Создаем директорию с мастер зонами
-mkdir /var/named/master/
+mkdir -p /var/named/master/
 
 # 6) Создание прямой DNS зоны
 tee /var/named/master/$zone_name << EOF
