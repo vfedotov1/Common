@@ -1,4 +1,2 @@
 # Common
-Check
-asfa
-123t3t
+https://github.com/vfedotov1/Common.git
