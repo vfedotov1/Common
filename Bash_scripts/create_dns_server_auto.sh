@@ -1,12 +1,17 @@
+# Скрипт установки DNS bind и созданя прямой и обратной зоны
+
+# HOW TO RUN
+# ./create_dns_server_auto.sh 192.168.0.20 192.168.0.0/24 192.168.0.1 home.local.ru
+
 # INPUT VARIABLES
-dns_server_addr=$1 # EXAMPLE 192.168.0.20
-allow_query_subnet=$2 # EXAMPLE 192.168.0.0/24
-forwarders_dns=$3 # EXAMPLE 192.168.0.1
-zone_name=$4 # EXAMPLE home.local.ru
+dns_server_addr=$1    # your dns server ip        EXAMPLE 192.168.0.20
+allow_query_subnet=$2 # allow-query subnet addres EXAMPLE 192.168.0.0/24
+forwarders_dns=$3     # dns that use for forward  EXAMPLE 192.168.0.1
+zone_name=$4          # you zone name             EXAMPLE home.local.ru
 
 # CALULATING VARIABLES
-reverse_name_zone=$(echo $dns_server_addr | awk -F\. '{print $3"."$2"."$1}') # EXAMPLE 0.168.192
-reverse_zone_last_actet=$(echo $dns_server_addr | awk -F\. '{print $4}') # EXAMPLE 20
+reverse_name_zone=$(echo $dns_server_addr | awk -F\. '{print $3"."$2"."$1}') # name of reverse zone        EXAMPLE 0.168.192
+reverse_zone_last_actet=$(echo $dns_server_addr | awk -F\. '{print $4}')     # last actec of DNS server ip EXAMPLE 20
 
 # 1) Install packages
 yum -y install bind
