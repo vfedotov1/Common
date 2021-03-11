@@ -5,7 +5,7 @@ forwarders_gateway=$3 # EXAMPLE 192.168.0.1
 zone_name=$4 # EXAMPLE home.local.ru
 reverse_name_zone=$(echo $dns_server_adress | awk -F\. '{print $3"."$2"."$1}') # EXAMPLE 0.168.192
 reverse_zone_last_actet=$(echo $dns_server_adress | awk -F\. '{print $4}') # EXAMPLE 20
-
+#
 # 1) Install packages
 yum -y install bind
 
