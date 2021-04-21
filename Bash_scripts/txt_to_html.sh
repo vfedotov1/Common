@@ -26,14 +26,21 @@
 #</tbody>
 #</table>
 ##################################################################
-#input_txt_file should be in the following format:
-#Sevice_name Growth_in_MB_per_day Stand
-#AdminServer 311.417 EB
-#BIP10_server 4.88291 EB
-#bi_server 34.1801 EB
-#CCB_server 8.10744 EB
+# input_txt_file should be in the following format:
+
+# Sevice_name Growth_in_MB_per_day Stand                              # Первая строка - заголовки столбцов/полей
+# AdminServer 311.417 EB                                              # Последующие строки - данные
+# BIP10_server 4.88291 EB                                             # Все значения в строках разделяются пробелами
+# bi_server 34.1801 EB
+# CCB_server 8.10744 EB
 ###############################################################################
-#run as ./txt_to_html.sh /tmp/input_txt_file /tmp/output_html_file "Table name"
+# run as
+# ./txt_to_html.sh /tmp/input_txt_file /tmp/output_html_file "Table name"
+
+# Принимает 3 аргумента:
+# /tmp/input_txt_file          - Файл в подготовленном формате для ковертирования
+# /tmp/output_html_file        - Файл в который будет выводится html таблица. Данный файл можно указывать несколько раз, если хотим сформировать несколько html таблиц в одном файле или добавить его к тесту. (Файл не перезапишется)
+# "Table name"                 - Имя таблицы которое будет использовано как заголовок при конвертировании
 ###############################################################################
 ##!/bin/bash
 input_txt_file=$1
