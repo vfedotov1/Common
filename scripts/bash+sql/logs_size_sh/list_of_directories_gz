@@ -1,0 +1,12 @@
+/sgm/logs/weblogic/AdminServer
+/sgm/logs/weblogic/BIP10_*
+/sgm/logs/weblogic/bi_*
+/sgm/logs/weblogic/CCB_*
+/sgm/logs/weblogic/ODI_*
+/sgm/logs/weblogic/WEB_*
+/sgm/logs/weblogic/XAIMASS_*
+/sgm/logs/weblogic/XAI_*
+/sgm/logs/XAI
+/sgm/logs/ccbhome_*
+/sgm/logs/ohs_inst*
+/sgm/logs/XAIMASS

@@ -1,9 +1,4 @@
 #!/bin/bash
-
-# cronrab -e
-# ### gather info regarding count of session from CLIENT_INFO
-# 30 */1 * * * /tmp/check_CLIENT_INFO.sh &>/tmp/check_CLIENT_INFO.log
-
 DB_ENV=DB.env
 if [ -d /tmp/check_CLIENT_INFO ]
   then
