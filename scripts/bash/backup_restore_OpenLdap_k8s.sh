@@ -65,7 +65,7 @@ cat <<EOT >$backup_share/ldapsearch_ldap_backup_${time_of_backup}_restore.sh && 
 # 2. Restore без удаления текущей бд
 
 ## Static variables ###
-namespace=\${kubectl get namespaces | grep -i ldap | awk '{print \$1}'}
+namespace=\$(kubectl get namespaces | grep -i ldap | awk '{print \$1}')
 current_location=\$(pwd)
 ldap_admin_password=\$(kubectl get secret -n \$namespace openldap -o jsonpath="{.data.LDAP_ADMIN_PASSWORD}" | base64 --decode; echo)
 ldap_pod=\$(kubectl get pods -n \$namespace | awk {'print \$1}' | grep -v NAME)
