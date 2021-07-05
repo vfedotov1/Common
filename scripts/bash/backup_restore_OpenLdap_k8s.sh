@@ -3,7 +3,7 @@
 # Так же создается скрипт restore_ldapsearch_ldap_backup_*.sh для рестора бд ldap с помощью  LDAPADD #
 #                                                                                                    #
 # Добавлять скрипт в кронтаб след. образом:                                                          #
-# * 23 * * * /root/backup_restore_OpenLdap_k8s.sh ldap /tmp/ldap_backup &>/tmp/ldap_backup.log       #
+# 0 23 * * * /root/backup_restore_OpenLdap_k8s.sh ldap /tmp/ldap_backup &>/tmp/ldap_backup.log       #
 # где,                                                                                               #
 # ldap - namespace, где создан openldap                                                              #
 # /tmp/ldap_backup - директория куда будут складываться файлы бэкапа и скрипты рестора               #
@@ -65,6 +65,7 @@ cat <<EOT >$backup_share/ldapsearch_ldap_backup_${time_of_backup}_restore.sh && 
 # 2. Restore без удаления текущей бд
 
 ## Static variables ###
+namespace=\${kubectl get namespaces | grep -i ldap | awk '{print $1}'}
 current_location=\$(pwd)
 ldap_admin_password=\$(kubectl get secret -n \$namespace openldap -o jsonpath="{.data.LDAP_ADMIN_PASSWORD}" | base64 --decode; echo)
 ldap_pod=\$(kubectl get pods -n \$namespace | awk {'print \$1}' | grep -v NAME)
