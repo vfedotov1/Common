@@ -30,13 +30,13 @@ size_of_services_log.sh
 11) В size_of_services_log.sh используется HARDCODE при сложении идентичных логов + мб где-то еще.
 
 Установка графика выполнения:
-# crontab -e
-# ### ПРОЕКТ. Daily log's growth Report
-# 0 9 * * * /home/fusion/logs_size_sh/size_of_services_log.sh 1>/tmp/size_of_services_log.sh.log 2>&1
+```
+crontab -e
+### ПРОЕКТ. Daily log's growth Report
+0 9 * * * /home/fusion/logs_size_sh/size_of_services_log.sh 1>/tmp/size_of_services_log.sh.log 2>&1
+```
 
-#######################################################
 Что доработать:
 - Вынести все переменные в начало скрипта
 - Копировать скрипт table_growth.sql каждый раз на сервер, если его нет
 - По возможности убрать HARDCODE
-#######################################################
