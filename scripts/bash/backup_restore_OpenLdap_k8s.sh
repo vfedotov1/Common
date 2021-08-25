@@ -3,7 +3,7 @@
 # Так же создается скрипт restore_ldapsearch_ldap_backup_*.sh для рестора бд ldap с помощью  LDAPADD #
 #                                                                                                    #
 # Добавлять скрипт в кронтаб след. образом:                                                          #
-# 0 23 * * * /root/backup_restore_OpenLdap_k8s.sh ldap /tmp/ldap_backup &>/tmp/ldap_backup.log       #
+# 0 23 * * * /root/backup_restore_OpenLdap_k8s.sh ldap /root/ldap_backup &>/tmp/ldap_backup.log       #
 # где,                                                                                               #
 # ldap - namespace, где создан openldap                                                              #
 # /tmp/ldap_backup - директория куда будут складываться файлы бэкапа и скрипты рестора               #
