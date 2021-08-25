@@ -1,21 +1,18 @@
-"ПРОЕКТ. Daily log's growth Report" Отправляется каждый день с cron user@server на "Администраторы БД <user_1@mail.ru>; Дежурные администраторы БД <user_2@mail.ru>"
+Реморт отправляется письмом с темой "ПРОЕКТ. Daily log's growth Report" каждый день через cron user@server на "Администраторы БД <user_1@mail.ru>; Дежурные администраторы БД <user_2@mail.ru>"
 
 В репорт входит:
-
   - информация по размеру логов сервисов ЕБ за предыдущий день
   - информация по приросту размеров таблиц содержащих логи (инфа берется с sys.table_growth_job) за предыдущий день
 
 Мониторинг роста таблиц производится джобой sys.table_growth_job в бд DB_NAME (Выполняется каждый день в 23:45)
 
 Джобой выполняется следующее:
-
   - в таблицу system.table_growth добавляется информация по размеру таблиц указанных в джобе
   - высчитывается прирост в mb относительно прошлого дня
 
 Историю по размерам и приросту в день можно посмотреть в sys.table_growth_job.
 
 Установка:
-
 1) выполнить git clone в /home/fusion/
 2) для функционирования в /home/fusion/logs_size_sh/ обязательно должны быть след. файлы:
 list_of_directories_gz
@@ -33,7 +30,6 @@ size_of_services_log.sh
 11) В size_of_services_log.sh используется HARDCODE при сложении идентичных логов + мб где-то еще.
 
 Установка графика выполнения:
-
 # crontab -e
 # ### ПРОЕКТ. Daily log's growth Report
 # 0 9 * * * /home/fusion/logs_size_sh/size_of_services_log.sh 1>/tmp/size_of_services_log.sh.log 2>&1
