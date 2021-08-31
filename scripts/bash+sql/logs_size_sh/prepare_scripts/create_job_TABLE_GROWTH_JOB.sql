@@ -2,7 +2,7 @@ BEGIN
   SYS.DBMS_SCHEDULER.CREATE_JOB
     (
        job_name        => 'SYS.TABLE_GROWTH_JOB'
-      ,start_date      => TO_TIMESTAMP_TZ('2020/10/02 14:45:00.845336 Europe/Moscow','yyyy/mm/dd hh24:mi:ss.ff tzr')
+      ,start_date      => NULL
       ,repeat_interval => 'FREQ=DAILY; byhour=23'
       ,end_date        => NULL
       ,job_class       => 'DEFAULT_JOB_CLASS'
