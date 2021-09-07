@@ -1,26 +1,45 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-BRIDGED_NET="192.168.1"
+BRIDGED_NET="192.168.1."
 DOMAIN=".home.local"
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure("2") do |config|
-  config.vm.define "ol7" do |ol7|
+  config.ssh.username = 'vagrant'
+  config.ssh.password = 'vagrant'
+  #config.ssh.remote_user = 'root'
+  config.ssh.insert_key = false
+  # enable root ssh login
+  config.vm.provision "shell", inline: <<-SHELL
+   sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+   sudo sed -i 's/PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
+   sudu su - root -c "echo -e "root00\nroot00" | passwd"
+   sudo service ssh restart
+  SHELL
+  #####################
+  # Oracle Linux 7 vm #
+  #####################
+  config.vm.define "ol7", autostart: false do |ol7|
    ol7.vm.box = "oraclelinux/7"
    ol7.vm.box_url = "https://oracle.github.io/vagrant-projects/boxes/oraclelinux/7.json"
   end
-  # Ansible vm
-  config.vm.define "ansible" do |ubuntu|
+  ##############
+  # Ansible vm #
+  ##############
+  config.vm.define "ansible", autostart: true do |ubuntu|
    ubuntu.vm.box = "ubuntu/trusty64"
    # Hostname который будет присвоен VM (самой ОС)
    ubuntu.vm.hostname = "ansible" + DOMAIN
+   # Add Bridged Network
+   ubuntu.vm.network "public_network", ip: BRIDGED_NET + "150", bridge: 'Realtek PCIe GBE Family Controller'
    # Установка Ansible
    ubuntu.vm.provision "shell", inline: <<-SHELL
    sudo su -
+   # fix error dpkg-preconfigure: unable to re-open stdin: No such file or directory
    export DEBIAN_FRONTEND=noninteractive
-   echo -e "root00\nroot00" | passwd
+   # install ansible
    apt-key update && apt-get update && apt-get -y upgrade && apt-get -y install python-software-properties && apt-get -y install software-properties-common && apt-add-repository -y ppa:rquillo/ansible && apt-get update && apt-get -y install ansible
    apt-add-repository ppa:ansible/ansible -y
    apt-get update
