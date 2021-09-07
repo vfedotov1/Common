@@ -15,7 +15,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
    sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
    sudo sed -i 's/PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
-   sudu su - root -c "echo -e "root00\nroot00" | passwd"
+   sudo su - root -c "echo -e "root00\nroot00" | passwd"
    sudo service ssh restart
   SHELL
   #####################
