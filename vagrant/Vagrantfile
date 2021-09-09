@@ -19,7 +19,7 @@ Vagrant.configure("2") do |config|
    ol7.vm.box_url = "https://oracle.github.io/vagrant-projects/boxes/oraclelinux/7.json"
    # Hostname который будет присвоен VM (самой ОС)
    ol7.vm.hostname = "ol7" + DOMAIN
-   # Add Bridged Network
+   # Add Bridged Network + задать ip
    ol7.vm.network "public_network", ip: BRIDGED_NET + "151", bridge: 'Realtek PCIe GBE Family Controller'
    # enable root ssh login
    ol7.vm.provision "shell", inline: <<-SHELL
@@ -36,7 +36,7 @@ Vagrant.configure("2") do |config|
    ubuntu.vm.box = "ubuntu/trusty64"
    # Hostname который будет присвоен VM (самой ОС)
    ubuntu.vm.hostname = "ansible" + DOMAIN
-   # Add Bridged Network
+   # Add Bridged Network + задать ip
    ubuntu.vm.network "public_network", ip: BRIDGED_NET + "150", bridge: 'Realtek PCIe GBE Family Controller'
    # enable root ssh login
    ubuntu.vm.provision "shell", inline: <<-SHELL
@@ -54,11 +54,23 @@ Vagrant.configure("2") do |config|
    sudo su -
    # fix error dpkg-preconfigure: unable to re-open stdin: No such file or directory
    export DEBIAN_FRONTEND=noninteractive
-   # install ansible
+   # install ansible + git + git clone ansible repository + add configs
    apt-key update && apt-get update && apt-get -y upgrade && apt-get -y install python-software-properties && apt-get -y install software-properties-common && apt-add-repository -y ppa:rquillo/ansible && apt-get update && apt-get -y install ansible
    apt-add-repository ppa:ansible/ansible -y
    apt-get update
    apt-get install ansible -y
+   apt-get install git
+   git clone https://github.com/vfedotov1/Common.git && mv Common/ansible ./ && rm -rf Common/
+   # add following lines to bash profile
+   echo -e "export ANSIBLE_CONFIG=~/ansible/ansible.cfg
+     export ANSIBLE_PLAYBOOK_DIR=~/ansible/playbooks
+     # export ANSIBLE_LIBRARY=/srv/modules/custom_modules:/srv/modules/vendor_modules
+     echo \"##############################################################################\"
+     test \"x\${ANSIBLE_CONFIG}\" = \"x\" || echo \"## ANSIBLE_CONFIG=\${ANSIBLE_CONFIG}\"
+     test \"x\${ANSIBLE_PLAYBOOK_DIR}\" = \"x\" || echo \"## ANSIBLE_PLAYBOOK_DIR=\${ANSIBLE_PLAYBOOK_DIR}\"
+     echo \"##\"
+     cat \$ANSIBLE_CONFIG | while read LINE; do echo \"## \$LINE\"; done
+     echo \"##############################################################################\"" >> .bash_profile
    SHELL
   end
  # The most common configuration options are documented and commented below.
