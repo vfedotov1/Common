@@ -59,7 +59,7 @@ Vagrant.configure("2") do |config|
    apt-add-repository ppa:ansible/ansible -y
    apt-get update
    apt-get install ansible -y
-   apt-get install git
+   apt-get install git -y
    git clone https://github.com/vfedotov1/Common.git && mv Common/ansible ./ && rm -rf Common/
    # add following lines to bash profile to change default config locations
    echo -e "export ANSIBLE_CONFIG=~/ansible/ansible.cfg
