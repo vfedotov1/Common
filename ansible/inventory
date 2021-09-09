@@ -1,0 +1,2 @@
+[db_nodes]
+db1.home.local.ru ansible_ssh_host=192.168.114.130
