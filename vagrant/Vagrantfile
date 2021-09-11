@@ -60,17 +60,23 @@ Vagrant.configure("2") do |config|
    apt-get install ansible -y
    apt-get install git -y
    sudo su - -c "git clone https://github.com/vfedotov1/Common.git && mv Common/ansible ./ && rm -rf Common/"
-   # add following lines to bash profile to change default config locations
-   sudo su - -c 'echo -e "export ANSIBLE_CONFIG=~/ansible/ansible.cfg
-export ANSIBLE_PLAYBOOK_DIR=~/ansible/playbooks
-# export ANSIBLE_LIBRARY=/srv/modules/custom_modules:/srv/modules/vendor_modules
-echo \"##############################################################################\"
-test \"x\${ANSIBLE_CONFIG}\" = \"x\" || echo \"## ANSIBLE_CONFIG=\${ANSIBLE_CONFIG}\"
-test \"x\${ANSIBLE_PLAYBOOK_DIR}\" = \"x\" || echo \"## ANSIBLE_PLAYBOOK_DIR=\${ANSIBLE_PLAYBOOK_DIR}\"
-echo \"##\"
-cat \$ANSIBLE_CONFIG | while read LINE; do echo \"## \$LINE\"; done
-echo \"##############################################################################\"" >> .bash_profile'
    SHELL
+   # add following lines to bash profile to change default config locations
+   ubuntu.vm.provision "shell", inline: <<-SHELL
+   sudo su - -c 'cat << EOF >> ~/.bash_profile
+yellow="\\\\033[0;33m"
+Color_Off="\\\\033[0m"
+export ANSIBLE_CONFIG=/root/ansible/ansible.cfg
+export ANSIBLE_PLAYBOOK_DIR=/root/ansible/playbooks
+# export ANSIBLE_LIBRARY=/srv/modules/custom_modules:/srv/modules/vendor_modules
+echo "##############################################################################"
+test "x\\${ANSIBLE_CONFIG}" = 'x' || echo "## ANSIBLE_CONFIG=\\${ANSIBLE_CONFIG}"
+test "x\\${ANSIBLE_PLAYBOOK_DIR}" = 'x' || echo "## ANSIBLE_PLAYBOOK_DIR=\\${ANSIBLE_PLAYBOOK_DIR}"
+echo -e "##\\n################# ANSIBLE_CONFIG #################"
+cat \\$ANSIBLE_CONFIG | while read LINE; do echo -e "## \\${yellow}\\${LINE}\\${Color_Off}"; done
+echo "##############################################################################"
+EOF'
+  SHELL
   end
  # The most common configuration options are documented and commented below.
   # For a complete reference, please see the online documentation at
