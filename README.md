@@ -7,6 +7,9 @@ git clone https://github.com/vfedotov1/Common.git && mv Common/ansible ./ && rm 
 # vagrant + vagrant up ansible
 git clone https://github.com/vfedotov1/Common.git && mv Common/vagrant ./ && rm -rf Common/ && chmod +x vagrant/*sh && cd vagrant && vagrant up && ./vmconnect.sh
 
+# vagrant + vagrant up all
+git clone https://github.com/vfedotov1/Common.git && mv Common/vagrant ./ && rm -rf Common/ && chmod +x vagrant/*sh && cd vagrant && vagrant up ansible ol7 && ./vmconnect.sh
+
 # scripts
 git clone https://github.com/vfedotov1/Common.git && mv Common/scripts ./ && rm -rf Common/
 

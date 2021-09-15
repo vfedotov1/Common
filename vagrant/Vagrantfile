@@ -23,7 +23,7 @@ Vagrant.configure("2") do |config|
    # Add Bridged Network + задать ip
    ol7.vm.network "public_network", ip: BRIDGED_NET + "151", bridge: 'Realtek PCIe GBE Family Controller'
    # Add interal Network + задать ip
-   config.vm.network "private_network", ip: INTERNAL_NET + "50"
+   ol7.vm.network "private_network", ip: INTERNAL_NET + "50"
    # enable root ssh login
    ol7.vm.provision "shell", inline: <<-SHELL
    sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
@@ -33,6 +33,7 @@ Vagrant.configure("2") do |config|
    SHELL
    # creating dns server
    ol7.vm.provision "shell", inline: <<-SHELL
+   yum install git -y
    sudo su - && git clone https://github.com/vfedotov1/Common.git && mv Common/scripts/bash/create_dns_server_auto.sh ./ && rm -rf Common/
    SHELL
   end
