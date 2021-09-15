@@ -1,6 +1,6 @@
 # mvconnect.sh script for mobaxterm # Works exactly the way `vagrant ssh` should
 # run as ./vmconnect.sh ubuntu
-vm_name=$1 # vm name
+vm_name=${1:-'ansible'} # vm name
 if [ -f "./vagrant-ssh_${vm_name}" ]
 then
 echo "vagrant-ssh already created"

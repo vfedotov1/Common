@@ -1,6 +1,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 BRIDGED_NET="192.168.1."
+INTERNAL_NET="192.168.55."
 DOMAIN=".home.local"
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
@@ -21,12 +22,18 @@ Vagrant.configure("2") do |config|
    ol7.vm.hostname = "ol7" + DOMAIN
    # Add Bridged Network + задать ip
    ol7.vm.network "public_network", ip: BRIDGED_NET + "151", bridge: 'Realtek PCIe GBE Family Controller'
+   # Add interal Network + задать ip
+   config.vm.network "private_network", ip: INTERNAL_NET + "50"
    # enable root ssh login
    ol7.vm.provision "shell", inline: <<-SHELL
    sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
    sudo sed -i 's/PermitRootLogin.*/PermitRootLogin yes/g' /etc/ssh/sshd_config
    sudo su - root -c 'echo -e "root00\nroot00" | passwd'
    sudo service sshd restart
+   SHELL
+   # creating dns server
+   ol7.vm.provision "shell", inline: <<-SHELL
+   sudo su - && git clone https://github.com/vfedotov1/Common.git && mv Common/scripts/bash/create_dns_server_auto.sh ./ && rm -rf Common/
    SHELL
   end
   ##############
@@ -38,6 +45,8 @@ Vagrant.configure("2") do |config|
    ubuntu.vm.hostname = "ansible" + DOMAIN
    # Add Bridged Network + задать ip
    ubuntu.vm.network "public_network", ip: BRIDGED_NET + "150", bridge: 'Realtek PCIe GBE Family Controller'
+   # Add interal Network + задать ip
+   config.vm.network "private_network", ip: INTERNAL_NET + "51"
    # enable root ssh login
    ubuntu.vm.provision "shell", inline: <<-SHELL
    sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
@@ -64,17 +73,19 @@ Vagrant.configure("2") do |config|
    # add following lines to bash profile to change default config locations
    ubuntu.vm.provision "shell", inline: <<-SHELL
    sudo su - -c 'cat << EOF >> ~/.bash_profile
+Green="\\\\033[0;32m"
 yellow="\\\\033[0;33m"
+Red="\\\\033[0;31m"
 Color_Off="\\\\033[0m"
 export ANSIBLE_CONFIG=/root/ansible/ansible.cfg
 export ANSIBLE_PLAYBOOK_DIR=/root/ansible/playbooks
 # export ANSIBLE_LIBRARY=/srv/modules/custom_modules:/srv/modules/vendor_modules
-echo "##############################################################################"
-test "x\\${ANSIBLE_CONFIG}" = 'x' || echo "## ANSIBLE_CONFIG=\\${ANSIBLE_CONFIG}"
-test "x\\${ANSIBLE_PLAYBOOK_DIR}" = 'x' || echo "## ANSIBLE_PLAYBOOK_DIR=\\${ANSIBLE_PLAYBOOK_DIR}"
-echo -e "##\\n################# ANSIBLE_CONFIG #################"
-cat \\$ANSIBLE_CONFIG | while read LINE; do echo -e "## \\${yellow}\\${LINE}\\${Color_Off}"; done
-echo "##############################################################################"
+echo -e "\\${Red}##############################################################################\\${Color_Off}"
+test "x\\${ANSIBLE_CONFIG}" = 'x' || echo -e "\\${Red}##\\${Color_Off} \\${Green}ANSIBLE_CONFIG=\\${ANSIBLE_CONFIG}\\${Color_Off}"
+test "x\\${ANSIBLE_PLAYBOOK_DIR}" = 'x' || echo -e "\\${Red}##\\${Color_Off} \\${Green}ANSIBLE_PLAYBOOK_DIR=\\${ANSIBLE_PLAYBOOK_DIR}\\${Color_Off}"
+echo -e "\\${Red}################# ANSIBLE_CONFIG #################\\${Color_Off}"
+cat \\$ANSIBLE_CONFIG | while read LINE; do echo -e "\\${Red}##\\${Color_Off} \\${yellow}\\${LINE}\\${Color_Off}"; done
+echo -e "\\${Red}##############################################################################\\${Color_Off}"
 EOF'
   SHELL
   end
