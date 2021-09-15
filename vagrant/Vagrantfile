@@ -1,6 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-BRIDGED_NET="192.168.1."
+BRIDGED_NET="192.168.0."
 INTERNAL_NET="192.168.55."
 DOMAIN=".home.local"
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
@@ -21,7 +21,7 @@ Vagrant.configure("2") do |config|
    # Hostname который будет присвоен VM (самой ОС)
    ol7.vm.hostname = "ol7" + DOMAIN
    # Add Bridged Network + задать ip
-   ol7.vm.network "public_network", ip: BRIDGED_NET + "151", bridge: 'Realtek PCIe GBE Family Controller'
+   ol7.vm.network "public_network", ip: BRIDGED_NET + "150", bridge: 'Realtek PCIe GBE Family Controller'
    # Add interal Network + задать ip
    ol7.vm.network "private_network", ip: INTERNAL_NET + "50"
    # enable root ssh login
@@ -45,7 +45,7 @@ Vagrant.configure("2") do |config|
    # Hostname который будет присвоен VM (самой ОС)
    ubuntu.vm.hostname = "ansible" + DOMAIN
    # Add Bridged Network + задать ip
-   ubuntu.vm.network "public_network", ip: BRIDGED_NET + "150", bridge: 'Realtek PCIe GBE Family Controller'
+   ubuntu.vm.network "public_network", ip: BRIDGED_NET + "151", bridge: 'Realtek PCIe GBE Family Controller'
    # Add interal Network + задать ip
    config.vm.network "private_network", ip: INTERNAL_NET + "51"
    # enable root ssh login
