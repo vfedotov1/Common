@@ -20,8 +20,8 @@ git clone https://github.com/vfedotov1/Common.git && mv Common/vagrant ./ && rm 
 VBoxManage="/drives/c/Program\ Files/Oracle/VirtualBox/VBoxManage.exe"
 # function kill all vm via virtualbox
 function killvms() {
-    eval ${VBoxManage} list runningvms | awk '{print $2;}' | while read vmid; do eval ${VBoxManage} controlvm ${vmid} poweroff; done
-    eval ${VBoxManage} list vms | awk '{print $2;}' | while read vmid; do eval ${VBoxManage} unregistervm --delete ${vmid}; done
+    eval ${VBoxManage} list runningvms | grep vagrant | awk '{print $2;}' | while read vmid; do eval ${VBoxManage} controlvm ${vmid} poweroff; done
+    eval ${VBoxManage} list vms | grep vagrant | awk '{print $2;}' | while read vmid; do eval ${VBoxManage} unregistervm --delete ${vmid}; done
   }
 # kill all vm via vagrantdestroy otherwise
 killvms
