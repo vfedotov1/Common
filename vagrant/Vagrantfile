@@ -73,7 +73,7 @@ Vagrant.configure("2") do |config|
    SHELL
    # add following lines to bash profile to change default config locations
    ubuntu.vm.provision "shell", inline: <<-SHELL
-   sudo su - -c 'cat << EOF >> ~/.bash_profile
+   sudo su - -c 'cat << EOF >> ~/.profile
 Green="\\\\033[0;32m"
 yellow="\\\\033[0;33m"
 Red="\\\\033[0;31m"
