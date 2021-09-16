@@ -13,9 +13,9 @@ git clone https://github.com/vfedotov1/Common.git && mv Common/ansible ./ && rm 
 #########################################################
 git clone https://github.com/vfedotov1/Common.git && mv Common/vagrant ./ && rm -rf Common/ && chmod +x vagrant/*sh && cd vagrant && vagrant up ansible && ./vmconnect.sh
 
-##################################################################################
-### vagrant + vagrant destroy all vm + vagrant up all vm  + connect to ansible ###
-##################################################################################
+######################################################################################
+### vagrant + kill all vm via VBoxManage + vagrant up all vm  + connect to ansible ###
+######################################################################################
 {
 VBoxManage="/drives/c/Program\ Files/Oracle/VirtualBox/VBoxManage.exe"
 # function kill all vm via virtualbox
@@ -24,8 +24,9 @@ function killvms() {
     eval ${VBoxManage} list vms | awk '{print $2;}' | while read vmid; do eval ${VBoxManage} unregistervm --delete ${vmid}; done
   }
 # kill all vm via vagrantdestroy otherwise
-vagrant global-status | grep virtualbox | awk '{print $1}' | xargs vagrant destroy -f || killvms
-cd ../ && rm -rf vagrant/ Common/ && git clone https://github.com/vfedotov1/Common.git && mv Common/vagrant ./ && rm -rf Common/ && chmod +x vagrant/*sh && cd vagrant && vagrant up && ./vmconnect.sh
+killvms
+#vagrant global-status | grep virtualbox | awk '{print $1}' | xargs vagrant destroy -f || killvms
+rm -rf vagrant/ Common/ && git clone https://github.com/vfedotov1/Common.git && mv Common/vagrant ./ && rm -rf Common/ && chmod +x vagrant/*sh && cd vagrant && vagrant up && ./vmconnect.sh
 }
 
 ###############
