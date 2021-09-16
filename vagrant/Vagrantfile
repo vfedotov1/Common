@@ -15,7 +15,7 @@ Vagrant.configure("2") do |config|
   #####################
   # Oracle Linux 7 vm #
   #####################
-  config.vm.define "ol7", autostart: false do |ol7|
+  config.vm.define "ol7", autostart: true do |ol7|
    ol7.vm.box = "oraclelinux/7"
    ol7.vm.box_url = "https://oracle.github.io/vagrant-projects/boxes/oraclelinux/7.json"
    # Hostname который будет присвоен VM (самой ОС)
