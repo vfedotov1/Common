@@ -34,7 +34,7 @@ rm -rf vagrant/ Common/ && git clone https://github.com/vfedotov1/Common.git && 
 ###############
 ### scripts ###
 ###############
-git clone https://github.com/vfedotov1/Common.git && mv Common/scripts ./ && rm -rf Common/ $$ find scripts/ -type f -name "*.sh" | xargs chmod +x
+git clone https://github.com/vfedotov1/Common.git && mv Common/scripts ./ && rm -rf Common/ && find scripts/ -type f -name "*.sh" | xargs chmod +x
 
 ###########
 ### dns ### Common\scripts\bash\create_dns_server_auto.sh
