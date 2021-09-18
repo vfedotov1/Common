@@ -1,3 +1,5 @@
+Загрузка репозитория:
+
 ##############
 ### Common ###
 ##############
@@ -35,6 +37,6 @@ rm -rf vagrant/ Common/ && git clone https://github.com/vfedotov1/Common.git && 
 git clone https://github.com/vfedotov1/Common.git && mv Common/scripts ./ && rm -rf Common/ $$ find scripts/ -type f -name "*.sh" | xargs chmod +x
 
 ###########
-### dns ###
+### dns ### Common\scripts\bash\create_dns_server_auto.sh
 ###########
-git clone https://github.com/vfedotov1/Common.git && mv Common/scripts/bash/create_dns_server_auto.sh ./ && rm -rf Common/
+git clone https://github.com/vfedotov1/Common.git && mv Common/scripts/bash/create_dns_server_auto.sh ./ && rm -rf Common/ && chmod + x create_dns_server_auto.sh

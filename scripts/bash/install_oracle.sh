@@ -7,7 +7,7 @@
 green="\\033[0;32m"
 yellow="\\033[0;33m"
 red="\\033[0;31m"
-color_Off="\\033[0m"
+color_off="\\033[0m"
 cyan="\\033[0;36m"
 
 # список версий бд
@@ -53,10 +53,10 @@ ORACLE_VERSION=${4:-'19.3'}
 
 ## function WebDav для загрузки файлов установки ##
 function WebDav() {
-echo -e "\n${cyan}######################################${color_Off}"
-echo -e "${green}Загрузка ${2} по WebDav в /tmp/${2}${color_Off}\n"
+echo -e "\n${cyan}######################################${color_off}"
+echo -e "${green}Загрузка ${2} по WebDav в /tmp/${2}${color_off}\n"
 echo -e "${yellow}curl -u "${webdav_username}:PASSWORD" ${webdav_url}${1}${2} --output /tmp/${2} --progress-bar | tee /dev/null${yellow}"
-echo -e "${cyan}######################################${color_Off}"
+echo -e "${cyan}######################################${color_off}"
 curl -u "${webdav_username}:${webdav_password}" ${webdav_url}${1}${2} --output /tmp/${2} --progress-bar | tee /dev/null
 }
 
@@ -108,47 +108,47 @@ export ORADIAG=${DB_ROOT_DIR}" > DBTST.env'
 #\\\ УСТАНОВКА БД СОГЛАСНО СОГЛАСНО ЗАПРОШЕННОЙ ВЕРСИИ. 19.3 СТАВИТСЯ ПО ДЕФОЛТУ \\\#
 #\\ Выбирается согласно логике "if версия elif версия elif версия elif версия fi" \\#
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#
-echo -e "${cyan}######################################${color_Off}"
-echo -e "${cyan}Установка Oracle Database ${ORACLE_VERSION}\nИмя базы: ${STAND_CODE}\nРасположение датафайлов: ${ORADATA}\nДиректория установки= ${DB_ROOT_DIR}${color_Off}"
-echo -e "${cyan}######################################${color_Off}\n"
+echo -e "${cyan}######################################${color_off}"
+echo -e "${cyan}Установка Oracle Database ${ORACLE_VERSION}\nИмя базы: ${STAND_CODE}\nРасположение датафайлов: ${ORADATA}\nДиректория установки= ${DB_ROOT_DIR}${color_off}"
+echo -e "${cyan}######################################${color_off}\n"
 
 ##########################################
 ########## Oracle Database 19.3 ##########
 ##########################################
 if [ "${ORACLE_VERSION}" == '19.3' ]
 then
-echo -e "Установка переменных \$oracle_version \$webdav_dir согласно входному аргументу ORACLE_VERSION=${ORACLE_VERSION}"
+echo -e "${green}Установка переменных \$oracle_version \$webdav_dir согласно входному аргументу ORACLE_VERSION=${ORACLE_VERSION}${color_off}"
 ORACLE_VERSION='oracle_19_3'
 webdav_dir=${oracle_19_3_webdav_dir}
-echo -e "Загрузка файлов для установки с webdav сервера"
+echo -e "${green}Загрузка файлов для установки с webdav сервера${color_off}"
 compgen -v | grep -i ${ORACLE_VERSION} | grep -v dir | while read variables; do WebDav ${webdav_dir} ${!variables}; done
-echo -e "Вызов функции установки версии ${ORACLE_VERSION}"
+echo -e "${green}Вызов функции установки версии ${ORACLE_VERSION}${color_off}"
 19_3_db_install
 ##########################################
 ########## Oracle Database 18.10 #########
 ##########################################
 elif [ "${ORACLE_VERSION}" == '18.10' ]
 then
-echo -e "Установка переменных \$oracle_version \$webdav_dir согласно входному аргументу ORACLE_VERSION=${ORACLE_VERSION}"
+echo -e "${green}Установка переменных \$oracle_version \$webdav_dir согласно входному аргументу ORACLE_VERSION=${ORACLE_VERSION}${color_off}"
 ORACLE_VERSION='oracle_18_10'
 webdav_dir=${oracle_18_10_webdav_dir}
-echo -e "Загрузка файлов для установки с webdav сервера"
+echo -e "${green}Загрузка файлов для установки с webdav сервера${color_off}"
 compgen -v | grep -i ${ORACLE_VERSION} | grep -v dir | while read variables; do WebDav ${webdav_dir} ${!variables}; done
-echo -e "Вызов функции установки версии ${ORACLE_VERSION}"
+echo -e "${green}Вызов функции установки версии ${ORACLE_VERSION}${color_off}"
 18_10_db_install
 #########################################
 ########## Oracle Database 18.3 #########
 ##########################################
 elif [ "${ORACLE_VERSION}" == '18.3' ]
 then
-echo -e "Установка переменных \$oracle_version \$webdav_dir согласно входному аргументу ORACLE_VERSION=${ORACLE_VERSION}"
+echo -e "${green}Установка переменных \$oracle_version \$webdav_dir согласно входному аргументу ORACLE_VERSION=${ORACLE_VERSION}${color_off}"
 ORACLE_VERSION='oracle_18_3'
 webdav_dir=${oracle_18_3_webdav_dir}
-echo -e "Загрузка файлов для установки с webdav сервера"
+echo -e "${green}Загрузка файлов для установки с webdav сервера${color_off}"
 compgen -v | grep -i ${ORACLE_VERSION} | grep -v dir | while read variables; do WebDav ${webdav_dir} ${!variables}; done
-echo -e "Вызов функции установки версии ${ORACLE_VERSION}"
+echo -e "${green}Вызов функции установки версии ${ORACLE_VERSION}${color_off}"
 18_3_db_install
 else
-echo "Некорректно указана версия Oracle Database - ${ORACLE_VERSION}. Необходимо выбрать одну из следующих версий:"
-echo -e  ${version_list}
+echo "${red}Некорректно указана версия Oracle Database - ${ORACLE_VERSION}. Необходимо выбрать одну из следующих версий:{color_off}"
+echo -e  ${red}${version_list}${color_off}
 fi
