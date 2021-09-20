@@ -67,9 +67,9 @@ curl -u "${webdav_username}:${webdav_password}" ${webdav_url}${1}${2} --output /
 ## function Выполнение root'вых скриптов во время установки БД через runInstaller и продолжение установки
 function run_root_scripts() {
 if grep -q "*execute the following script*" ${db_install_log}; then
-    tail -12 ${db_install_log} | grep "^1." | awk '{print $2}' | eval
+    tail -12 ${db_install_log} | grep -i "1\..*root.sh" | awk '{print $2}' | /bin/bash
     sleep 8s
-    tail -12 ${db_install_log} | grep "^2." | awk '{print $2}' | eval
+    tail -12 ${db_install_log} | grep -i "2\..*root.sh" | awk '{print $2}' | /bin/bash
     sleep 8s
     su - oracle -c ". ./${STAND_CODE}.env && $ORACLE_HOME/runInstaller -executeConfigTools -responseFile ${ORACLE_HOME}/install/response/db_istall_${STAND_CODE}.rsp -silent"
 else
