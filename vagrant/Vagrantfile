@@ -30,7 +30,7 @@ Vagrant.configure("2") do |config|
    # Add interal Network + задать ip
    ol7.vm.network "private_network", ip: INTERNAL_NET + "50"
    # Параметры ram
-   ol7.vm.provider "virtualbox" do |ol7um|
+   ol7.vm.provider "virtualbox" do |ol7m|
  ol7m.memory = 1500
    end
    # enable root ssh login
