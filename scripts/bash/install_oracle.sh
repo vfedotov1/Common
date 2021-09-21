@@ -57,72 +57,128 @@ DB_PASSWORD=${5:-'welcome1'}
 
 ## function WebDav для загрузки файлов установки ##
 function WebDav() {
-echo -e "\n${cyan}######################################${color_off}"
-echo -e "${green}Загрузка ${2} по WebDav в /tmp/${2}${color_off}\n"
-echo -e "${yellow}curl -u "${webdav_username}:PASSWORD" ${webdav_url}${1}${2} --output /tmp/${2} --progress-bar | tee /dev/null${yellow}"
-echo -e "${cyan}######################################${color_off}"
-curl -u "${webdav_username}:${webdav_password}" ${webdav_url}${1}${2} --output /tmp/${2} --progress-bar | tee /dev/null
+  echo -e "\n${cyan}######################################${color_off}"
+  echo -e "${green}Загрузка ${2} по WebDav в /tmp/${2}${color_off}\n"
+  echo -e "${yellow}curl -u "${webdav_username}:PASSWORD" ${webdav_url}${1}${2} --output /tmp/${2} --progress-bar | tee /dev/null${yellow}"
+  echo -e "${cyan}######################################${color_off}"
+  curl -u "${webdav_username}:${webdav_password}" ${webdav_url}${1}${2} --output /tmp/${2} --progress-bar | tee /dev/null
+  }
+
+  ## function Выполнение root'вых скриптов во время установки БД через runInstaller и продолжение установки
+  function run_root_scripts() {
+  if grep -q "execute the following script" ${db_install_log}; then
+      grep -i "1\..*root.sh" ${db_install_log} | awk '{print $2}' | /bin/bash
+      sleep 8s
+      grep -i "2\..*root.sh" ${db_install_log} | awk '{print $2}' | /bin/bash
+      sleep 8s
+      su - oracle -c ". ./${STAND_CODE}.env && $ORACLE_HOME/runInstaller -executeConfigTools -responseFile ${ORACLE_HOME}/install/response/db_istall_${STAND_CODE}.rsp -silent"
+  else
+      echo -e "${red}Необходимо проверить лог установки БД на ошибки и перезапустить скрипт после устранения${color_off}\n"
+      echo -e "${yellow}Возможные ошибки и их устаранение.\n
+  ${red}Ошибка №1${color_off}\n
+  ${yellow}--------------------------------------------------------------------
+  При установке БД через runInstaller(Silent mode) получаем ошибку:\n
+  WARNING:  [Aug 4, 2021 2:28:04 PM] [WARNING] [INS-32091] Software installation was successful. But some configuration assistants failed, were cancelled or skipped.
+     ACTION: Refer to the logs or contact Oracle Support Services.
+  --------------------------------------------------------------------\n
+  Решение:
+  1. В данном случае hostname сервера с бд недоступен по короткому имени из за того что хост с бд не был внесён в dns. Что видно по ошибкам \"Unable to retrieve the full host name\" и \"Skipping line: [FATAL] [DBT-06103] The port (5,500) is already in use.\"
+  Проверяем лог установки на наличие след. записей:\n
+  ----------------
+  INFO:  [Aug 4, 2021 2:27:53 PM] Gathering system details...
+  WARNING:  [Aug 4, 2021 2:27:53 PM] Unable to retrieve the full host name
+  INFO:  [Aug 4, 2021 2:27:53 PM] Registering setup bean
+  INFO:  [Aug 4, 2021 2:27:53 PM] Setting Response file data to the Installer
+  WARNING:  [Aug 4, 2021 2:27:53 PM] Unable to find the namespace URI. Reason: Start of root element expected.\n
+  INFO:  [Aug 4, 2021 2:28:04 PM] [FATAL] [DBT-06103] The port (5,500) is already in use.
+  INFO:  [Aug 4, 2021 2:28:04 PM] Skipping line: [FATAL] [DBT-06103] The port (5,500) is already in use.
+  INFO:  [Aug 4, 2021 2:28:04 PM]    ACTION: Specify a free port.
+  INFO:  [Aug 4, 2021 2:28:04 PM] Skipping line:    ACTION: Specify a free port.
+  INFO:  [Aug 4, 2021 2:28:04 PM] Completed Plugin named: Oracle Database Configuration Assistant\n
+  INFO:  [Aug 4, 2021 2:28:04 PM] Validating state <setup>
+  WARNING:  [Aug 4, 2021 2:28:04 PM] [WARNING] [INS-32091] Software installation was successful. But some configuration assistants failed, were cancelled or skipped.
+     ACTION: Refer to the logs or contact Oracle Support Services.
+  ----------------\n
+  2. Добавляем в /etc/hosts след. записи, проверяем что хост пингуется по не полному имени и перезапускаем установку.
+  vi /etc/hosts
+  172.16.100.20 dbtst-db.domain.ru dbtst-db
+  :wq!\n
+  [root@dbtst-db tmp]# ping dbtst-db
+  PING dbtst-db.domain.ru (172.16.100.20) 56(84) bytes of data.
+  64 bytes from dbtst-db.domain.ru (172.16.100.20): icmp_seq=1 ttl=64 time=0.040 ms
+  64 bytes from dbtst-db.domain.ru (172.16.100.20): icmp_seq=2 ttl=64 time=0.051 ms${color_off}"
+  fi
 }
 
-## function Выполнение root'вых скриптов во время установки БД через runInstaller и продолжение установки
-function run_root_scripts() {
-if grep -q "execute the following script" ${db_install_log}; then
-    grep -i "1\..*root.sh" ${db_install_log} | awk '{print $2}' | /bin/bash
-    sleep 8s
-    grep -i "2\..*root.sh" ${db_install_log} | awk '{print $2}' | /bin/bash
-    sleep 8s
-    su - oracle -c ". ./${STAND_CODE}.env && $ORACLE_HOME/runInstaller -executeConfigTools -responseFile ${ORACLE_HOME}/install/response/db_istall_${STAND_CODE}.rsp -silent"
-else
-    echo -e "${red}Необходимо проверить лог установки БД на ошибки и перезапустить скрипт после устранения${color_off}\n"
-    echo -e "${yellow}Возможные ошибки и их устаранение.\n
-${red}Ошибка №1${color_off}\n
-${yellow}--------------------------------------------------------------------
-При установке БД через runInstaller(Silent mode) получаем ошибку:\n
-WARNING:  [Aug 4, 2021 2:28:04 PM] [WARNING] [INS-32091] Software installation was successful. But some configuration assistants failed, were cancelled or skipped.
-   ACTION: Refer to the logs or contact Oracle Support Services.
---------------------------------------------------------------------\n
-Решение:
-1. В данном случае hostname сервера с бд недоступен по короткому имени из за того что хост с бд не был внесён в dns. Что видно по ошибкам \"Unable to retrieve the full host name\" и \"Skipping line: [FATAL] [DBT-06103] The port (5,500) is already in use.\"
-Проверяем лог установки на наличие след. записей:\n
-----------------
-INFO:  [Aug 4, 2021 2:27:53 PM] Gathering system details...
-WARNING:  [Aug 4, 2021 2:27:53 PM] Unable to retrieve the full host name
-INFO:  [Aug 4, 2021 2:27:53 PM] Registering setup bean
-INFO:  [Aug 4, 2021 2:27:53 PM] Setting Response file data to the Installer
-WARNING:  [Aug 4, 2021 2:27:53 PM] Unable to find the namespace URI. Reason: Start of root element expected.\n
-INFO:  [Aug 4, 2021 2:28:04 PM] [FATAL] [DBT-06103] The port (5,500) is already in use.
-INFO:  [Aug 4, 2021 2:28:04 PM] Skipping line: [FATAL] [DBT-06103] The port (5,500) is already in use.
-INFO:  [Aug 4, 2021 2:28:04 PM]    ACTION: Specify a free port.
-INFO:  [Aug 4, 2021 2:28:04 PM] Skipping line:    ACTION: Specify a free port.
-INFO:  [Aug 4, 2021 2:28:04 PM] Completed Plugin named: Oracle Database Configuration Assistant\n
-INFO:  [Aug 4, 2021 2:28:04 PM] Validating state <setup>
-WARNING:  [Aug 4, 2021 2:28:04 PM] [WARNING] [INS-32091] Software installation was successful. But some configuration assistants failed, were cancelled or skipped.
-   ACTION: Refer to the logs or contact Oracle Support Services.
-----------------\n
-2. Добавляем в /etc/hosts след. записи, проверяем что хост пингуется по не полному имени и перезапускаем установку.
-vi /etc/hosts
-172.16.100.20 dbtst-db.domain.ru dbtst-db
-:wq!\n
-[root@dbtst-db tmp]# ping dbtst-db
-PING dbtst-db.domain.ru (172.16.100.20) 56(84) bytes of data.
-64 bytes from dbtst-db.domain.ru (172.16.100.20): icmp_seq=1 ttl=64 time=0.040 ms
-64 bytes from dbtst-db.domain.ru (172.16.100.20): icmp_seq=2 ttl=64 time=0.051 ms${color_off}"
-fi
+## function Проверка завершения Opatch
+function check_patch() {
+  if grep -q "OPatch succeeded" ${db_install_log}; then
+      echo -e "${green}Патч установлен${color_off}"
+  else
+      echo -e "${red}Патч не установлен. Необходимо проверить лог выполнения.${color_off}"
+  fi
+}
+
+## function Добавление записей в sqlnet.ora для разрешения соединений с более старых версий jdbc драйверов + reset паролей для применения настроек
+function jdbc8_allow() {
+  su - oracle -c ". ./${STAND_CODE}.env && cat << EOF >> ${ORACLE_HOME}/network/admin/sqlnet.ora
+  SQLNET.ALLOWED_LOGON_VERSION=8
+  SQLNET.ALLOWED_LOGON_VERSION_CLIENT=8
+  SQLNET.ALLOWED_LOGON_VERSION_SERVER=8
+  EOF"
+  su - oracle -c ". ./${STAND_CODE}.env && sqlplus / as sysdba << EOF
+  alter user sys identified by welcome1;
+  alter user system identified by welcome1;
+  EOF"
+}
+
+## function Добавление env файла в bash_profile
+function env_bash_profile() {
+  su - oracle -c "cat << EOF >> ~/.bash_profile
+  echo -e \"\nThe enviroment ${STAND_CODE}.env has been set:\n---------------------------\"
+  cat ~/${STAND_CODE}.env
+  . ./${STAND_CODE}.env
+  echo -e \"\n---------------------------\n\"
+  EOF"
+}
+
+## function Остановка listner'a и DB
+  function stop_db_listener() {
+  su - oracle -c ". ./${STAND_CODE}.env && lsnrctl stop && sqlplus / as sysdba <<EOF
+  shu immediate;
+  EOF"
+}
+
+## function Старт listner'a и DB
+function start_db_listener() {
+  su - oracle -c ". ./${STAND_CODE}.env && sqlplus / as sysdba <<EOF
+  startup;
+  EOF && lsnrctl start
+  EOF"
 }
 
 ## function Проверка завершения runInstaller
 function check_install() {
-if grep -q "Successfully Configured Software" ${db_install_log}; then
-    echo -e "${green}БД ${STAND_CODE} установлена!${color_off}"
-else
-    echo -e "${red}Необходимо проверить лог установки БД на ошибки и перезапустить скрипт после устранения${color_off}"
-fi
+  if grep -q "Successfully Configured Software" ${db_install_log}; then
+      echo -e "${green}БД ${STAND_CODE} установлена!${color_off}"
+  else
+      echo -e "${red}Необходимо проверить лог установки БД на ошибки и перезапустить скрипт после устранения${color_off}"
+  fi
 }
 
-## function Установка размера памяти бд в размере 90% от общей памяти сервера. в mb
+## function Open DB port and disable selinux
+function db_port_disable_selinux() {
+setenforce 0
+sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/sysconfig/selinux
+db_port=(su - oracle -c ". ./${STAND_CODE}.env && lsnrctl status | grep -i PORT | head -1 | grep -o '[[:digit:]]*'")
+firewall-cmd --zone=public --add-port=${db_port}/tcp --permanent
+firewall-cmd --reload
+}
+
+## function Вычисление размера памяти для бд в размере 90% от общей памяти сервера. в mb
 function memory_size() {
-    memory_sise=$(free -m | grep -i mem | awk '{print $2}')
-    db_memory_size=$((${memory_sise}*90/100))
+  memory_sise=$(free -m | grep -i mem | awk '{print $2}')
+  db_memory_size=$((${memory_sise}*90/100))
 }
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#
@@ -237,7 +293,35 @@ run_root_scripts || ${error}
 
 echo -e "${green}ШАГ 7. Проверка установки БД${color_off}\n"
 check_install || ${error}
-}
+
+echo -e "${green}ШАГ 8. Apply Patch 29935685 ${color_off}\n"
+
+echo -e "${green}ШАГ 8.1 Остановка listner'a и DB ${color_off}\n"
+stop_db_listener || ${error}
+
+echo -e "${green}ШАГ 8.2 Установка патча 29935685 ${color_off}\n"
+su - oracle -c ". ./${STAND_CODE}.env && cd /opt/patches/ && cp /tmp/p29935685_193000DBRU_Linux-x86-64.zip ./ && unzip p29935685_193000DBRU_Linux-x86-64.zip && rm -rf p29935685_193000DBRU_Linux-x86-64.zip" || ${error}
+su - oracle -c ". ./${STAND_CODE}.env && cd $ORACLE_HOME/OPatch && opatch apply -silent /opt/patches/29935685/" || ${error}
+check_patch || ${error}
+
+echo -e "${green}ШАГ 8.3 Старт listner'a и DB ${color_off}\n"
+start_db_listener || ${error}
+
+echo -e "${green}ШАГ 8. Фикс Bug 30591475 : ORA-7445:[KKOCFBMARKBINDFROCB]${color_off}\n"
+su - oracle -c ". ./${STAND_CODE}.env && sqlplus / as sysdba <<EOF
+alter system set \"_optimizer_join_elimination_enabled\" = FALSE;
+alter system set \"_fix_control\"='23210039:0';
+alter system set \"_complex_view_merging\" = FALSE;
+EOF" || ${error}
+
+echo -e "${green}ШАГ 9. Добавление env файла в bash_profile${color_off}\n"
+env_bash_profile || ${error}
+
+echo -e "${green}ШАГ 10. Добавление записей в sqlnet.ora для разрешения соединений с более старых версий jdbc драйверов + reset паролей для применения настроек${color_off}\n"
+jdbc8_allow || ${error}
+
+echo -e "${green}ШАГ 11. Open DB port and disable selinux${color_off}\n"
+db_port_disable_selinux || ${error}
 
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#
