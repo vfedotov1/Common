@@ -112,7 +112,7 @@ fi
 
 ## function Проверка завершения runInstaller
 function check_install() {
-if grep -q "*Successfully Configured Software*" ${db_install_log}; then
+if grep -q "Successfully Configured Software" ${db_install_log}; then
     echo -e "${green}БД ${STAND_CODE} установлена!${color_off}"
 else
     echo -e "${red}Необходимо проверить лог установки БД на ошибки и перезапустить скрипт после устранения${color_off}"
