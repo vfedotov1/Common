@@ -209,13 +209,13 @@ ORADIAG=${DB_ROOT_DIR}
                      unzip \
                      vim \
                      git && \
+      cd /tmp/ && yum install -y oracle-database-preinstall-19c
       mkdir -p $ORACLE_HOME $ORADATA $ORADBCFG $ORAAUDIT   && \
       chown -R oracle:oinstall ${DB_ROOT_DIR} && \
       chown -R oracle:oinstall $ORADATA && \
       yum update -y && \
       yum clean all && \
       rm -rf /var/tmp/*
-  cd /tmp/ && yum install -y oracle-database-preinstall-19c
 } || ${error}
 
 echo -e "${green}ШАГ 2. as oracle. Создание ${STAND_CODE}.env файла${color_off}\n"
