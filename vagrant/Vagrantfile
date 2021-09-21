@@ -51,7 +51,7 @@ Vagrant.configure("2") do |config|
    # Add Bridged Network + задать ip
    ubuntu.vm.network "public_network", ip: BRIDGED_NET + "151", bridge: 'Realtek PCIe GBE Family Controller'
    # Add interal Network + задать ip
-   config.vm.network "private_network", ip: INTERNAL_NET + "51"
+   ubuntu.vm.network "private_network", ip: INTERNAL_NET + "51"
    # enable root ssh login
    ubuntu.vm.provision "shell", inline: <<-SHELL
    sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
