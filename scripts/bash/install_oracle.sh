@@ -168,11 +168,11 @@ function check_install() {
 
 ## function Open DB port and disable selinux
 function db_port_disable_selinux() {
-setenforce 0
-sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/sysconfig/selinux
-db_port=(su - oracle -c ". ./${STAND_CODE}.env && lsnrctl status | grep -i PORT | head -1 | grep -o '[[:digit:]]*'")
-firewall-cmd --zone=public --add-port=${db_port}/tcp --permanent
-firewall-cmd --reload
+  setenforce 0
+  sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/sysconfig/selinux
+  db_port=(su - oracle -c ". ./${STAND_CODE}.env && lsnrctl status | grep -i PORT | head -1 | grep -o '[[:digit:]]*'")
+  firewall-cmd --zone=public --add-port=${db_port}/tcp --permanent
+  firewall-cmd --reload
 }
 
 ## function Вычисление размера памяти для бд в размере 90% от общей памяти сервера. в mb
