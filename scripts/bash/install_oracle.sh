@@ -14,7 +14,7 @@ cyan="\\033[0;36m"
 # список версий бд
 db_version_list='18.3\n18.10\n19.3'
 db_install_log=tmp_db_install_$(date +"%d_%m_%Y__%H_%M").log
-error="{ echo -e "${red}FAILED${color_off}" ; exit 1; }"
+error="echo -e "${red}FAILED${color_off}" ; exit 1;"
 
 ##################### webdav common ####################
 webdav_username='eb_owncloud'
