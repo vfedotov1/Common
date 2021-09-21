@@ -216,7 +216,7 @@ ORADIAG=${DB_ROOT_DIR}
       yum clean all && \
       rm -rf /var/tmp/*
   cd /tmp/ && yum install -y oracle-database-preinstall-19c
-} || { echo 'FAILED' ; exit 1; }
+} || ${error}
 
 echo -e "${green}ШАГ 2. as oracle. Создание ${STAND_CODE}.env файла${color_off}\n"
 su - oracle -c "echo -n \"export ORACLE_SID=${STAND_CODE}
@@ -322,6 +322,7 @@ jdbc8_allow || ${error}
 
 echo -e "${green}ШАГ 11. Open DB port and disable selinux${color_off}\n"
 db_port_disable_selinux || ${error}
+}
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#
 #\\\ УСТАНОВКА БД СОГЛАСНО СОГЛАСНО ЗАПРОШЕННОЙ ВЕРСИИ. 19.3 СТАВИТСЯ ПО ДЕФОЛТУ \\\#
