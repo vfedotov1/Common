@@ -131,7 +131,7 @@ function jdbc8_allow() {
   SQLNET.ALLOWED_LOGON_VERSION=8
   SQLNET.ALLOWED_LOGON_VERSION_CLIENT=8
   SQLNET.ALLOWED_LOGON_VERSION_SERVER=8
-  EOF"
+EOF"
   su - oracle -c ". ./${STAND_CODE}.env && sqlplus / as sysdba << EOF
   alter user sys identified by welcome1;
   alter user system identified by welcome1;
