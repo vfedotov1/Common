@@ -14,7 +14,6 @@ cyan="\\033[0;36m"
 # список версий бд
 db_version_list='18.3\n18.10\n19.3'
 db_install_log=tmp_db_install_$(date +"%d_%m_%Y__%H_%M").log
-error=$(echo -e "${red}FAILED${color_off}" ; exit 1;)
 
 ##################### webdav common ####################
 webdav_username='eb_owncloud'
@@ -54,6 +53,13 @@ DB_PASSWORD=${5:-'welcome1'}
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#
 #\\ Общие FUNCTIONS используемые в установках \\#
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#
+
+## function Завершение при ошибке ##
+function error() {
+echo -e "${red}FAILED${color_off}"
+exit 1
+}
+
 
 ## function WebDav для загрузки файлов установки ##
 function WebDav() {
@@ -216,7 +222,7 @@ ORADIAG=${DB_ROOT_DIR}
       yum update -y && \
       yum clean all && \
       rm -rf /var/tmp/*
-} || ${error}
+} || error
 
 echo -e "${green}ШАГ 2. as oracle. Создание ${STAND_CODE}.env файла${color_off}\n"
 su - oracle -c "echo -n \"export ORACLE_SID=${STAND_CODE}
@@ -227,7 +233,7 @@ export ORACLE_BASE=${DB_ROOT_DIR}/app/oracle
 export ORADATA=${ORADATA}
 export ORADBCFG=${DB_ROOT_DIR}/dbconfig
 export ORAAUDIT=${DB_ROOT_DIR}/audit
-export ORADIAG=${DB_ROOT_DIR}\" > ${STAND_CODE}.env" && echo -e "${yellow}${STAND_CODE}.env cоздан${color_off}\n" || ${error}
+export ORADIAG=${DB_ROOT_DIR}\" > ${STAND_CODE}.env" && echo -e "${yellow}${STAND_CODE}.env cоздан${color_off}\n" || error
 
 echo -e "${green}ШАГ 3. as oracle. Распаковка bin'арников${color_off}\n"
 su - oracle -c ". ./${STAND_CODE}.env && cd $ORACLE_BASE/product/19.3.0.0 && cp /tmp/LINUX.X64_193000_db_home.zip ./ && unzip LINUX.X64_193000_db_home.zip && rm -f LINUX.X64_193000_db_home.zip" || { echo 'FAILED' ; exit 1; }
@@ -270,7 +276,7 @@ oracle.install.db.config.starterdb.storageType=FILE_SYSTEM_STORAGE
 oracle.install.db.config.starterdb.fileSystemStorage.dataLocation=/sgm/data
 oracle.install.db.config.starterdb.fileSystemStorage.recoveryLocation=
 oracle.install.db.config.asm.diskGroup=
-oracle.install.db.config.asm.ASMSNMPPassword=\" > ${ORACLE_HOME}/install/response/db_istall_${STAND_CODE}.rsp" || ${error}
+oracle.install.db.config.asm.ASMSNMPPassword=\" > ${ORACLE_HOME}/install/response/db_istall_${STAND_CODE}.rsp" || error
 
 echo -e "${green}ШАГ 5. as oracle. Установка OracleSoftware and db через response file (silent mode)${color_off}\n"
 su - oracle -c ". ./${STAND_CODE}.env &&
@@ -289,39 +295,39 @@ $ORACLE_HOME/runInstaller -ignorePrereq -waitforcompletion -silent             	
     oracle.install.db.config.starterdb.fileSystemStorage.dataLocation=${ORADATA}"
 
 echo -e "${green}ШАГ 6. as root then as oracle. Выполнение root'вых скриптов и продолжение установки ${color_off}\n"
-run_root_scripts || ${error}
+run_root_scripts || error
 
 echo -e "${green}ШАГ 7. Проверка установки БД${color_off}\n"
-check_install || ${error}
+check_install || error
 
 echo -e "${green}ШАГ 8. Apply Patch 29935685 ${color_off}\n"
 
 echo -e "${green}ШАГ 8.1 Остановка listner'a и DB ${color_off}\n"
-stop_db_listener || ${error}
+stop_db_listener || error
 
 echo -e "${green}ШАГ 8.2 Установка патча 29935685 ${color_off}\n"
-su - oracle -c ". ./${STAND_CODE}.env && cd /opt/patches/ && cp /tmp/p29935685_193000DBRU_Linux-x86-64.zip ./ && unzip p29935685_193000DBRU_Linux-x86-64.zip && rm -rf p29935685_193000DBRU_Linux-x86-64.zip" || ${error}
-su - oracle -c ". ./${STAND_CODE}.env && cd $ORACLE_HOME/OPatch && opatch apply -silent /opt/patches/29935685/" || ${error}
-check_patch || ${error}
+su - oracle -c ". ./${STAND_CODE}.env && cd /opt/patches/ && cp /tmp/p29935685_193000DBRU_Linux-x86-64.zip ./ && unzip p29935685_193000DBRU_Linux-x86-64.zip && rm -rf p29935685_193000DBRU_Linux-x86-64.zip" || error
+su - oracle -c ". ./${STAND_CODE}.env && cd $ORACLE_HOME/OPatch && opatch apply -silent /opt/patches/29935685/" || error
+check_patch || error
 
 echo -e "${green}ШАГ 8.3 Старт listner'a и DB ${color_off}\n"
-start_db_listener || ${error}
+start_db_listener || error
 
 echo -e "${green}ШАГ 8. Фикс Bug 30591475 : ORA-7445:[KKOCFBMARKBINDFROCB]${color_off}\n"
 su - oracle -c ". ./${STAND_CODE}.env && sqlplus / as sysdba <<EOF
 alter system set \"_optimizer_join_elimination_enabled\" = FALSE;
 alter system set \"_fix_control\"='23210039:0';
 alter system set \"_complex_view_merging\" = FALSE;
-EOF" || ${error}
+EOF" || error
 
 echo -e "${green}ШАГ 9. Добавление env файла в bash_profile${color_off}\n"
-env_bash_profile || ${error}
+env_bash_profile || error
 
 echo -e "${green}ШАГ 10. Добавление записей в sqlnet.ora для разрешения соединений с более старых версий jdbc драйверов + reset паролей для применения настроек${color_off}\n"
-jdbc8_allow || ${error}
+jdbc8_allow || error
 
 echo -e "${green}ШАГ 11. Open DB port and disable selinux${color_off}\n"
-db_port_disable_selinux || ${error}
+db_port_disable_selinux || error
 }
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#
