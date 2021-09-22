@@ -135,7 +135,7 @@ function jdbc8_allow() {
   su - oracle -c ". ./${STAND_CODE}.env && sqlplus / as sysdba << EOF
   alter user sys identified by welcome1;
   alter user system identified by welcome1;
-  EOF"
+EOF"
 }
 
 ## function Добавление env файла в bash_profile
@@ -145,7 +145,7 @@ function env_bash_profile() {
   cat ~/${STAND_CODE}.env
   . ./${STAND_CODE}.env
   echo -e \"\n---------------------------\n\"
-  EOF"
+EOF"
 }
 
 ## function Остановка listner'a и DB
@@ -159,7 +159,8 @@ EOF"
 function start_db_listener() {
   su - oracle -c ". ./${STAND_CODE}.env && sqlplus / as sysdba <<EOF
   startup;
-EOF && lsnrctl start"
+EOF"
+  su - oracle -c  ". ./*.env && lsnrctl start"
 }
 
 ## function Проверка завершения Opatch
@@ -168,6 +169,7 @@ function check_patch() {
       echo -e "${green}Патч установлен!${color_off}\n"
   else
       echo -e "${red}Патч не установлен. Необходимо проверить лог выполнения.${color_off}\n"
+      exit 1
   fi
 }
 
@@ -325,7 +327,7 @@ echo -e "${yellow}ШАГ 8.2 Установка патча 29935685 ${color_off}
 mkdir -p /opt/patches/ && chmod 777 /opt/patches
 su - oracle -c ". ./${STAND_CODE}.env && cd /opt/patches/ && cp /tmp/p29935685_193000DBRU_Linux-x86-64.zip ./ && unzip p29935685_193000DBRU_Linux-x86-64.zip && rm -rf p29935685_193000DBRU_Linux-x86-64.zip" || error
 su - oracle -c ". ./${STAND_CODE}.env && cd ${ORACLE_HOME}/OPatch && opatch apply -silent /opt/patches/29935685/" || error
-check_patch || error
+check_patch
 
 echo -e "${yellow}ШАГ 8.3 Старт listner'a и DB ${color_off}\n"
 start_db_listener && success || error
