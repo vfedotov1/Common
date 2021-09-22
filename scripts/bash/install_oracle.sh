@@ -74,8 +74,8 @@ function WebDav_download() {
   curl -u "${webdav_username}:${webdav_password}" ${webdav_url}${1}${2} --output /tmp/${2} --progress-bar | tee /dev/null
   }
 
-  ## function Выполнение root'вых скриптов во время установки БД через runInstaller и продолжение установки
-  function run_root_scripts() {
+## function Выполнение root'вых скриптов во время установки БД через runInstaller и продолжение установки
+function run_root_scripts() {
   if grep -q "execute the following script" ${db_install_log}; then
       grep -i "1\..*root.sh" ${db_install_log} | awk '{print $2}' | /bin/bash
       sleep 8s
@@ -193,7 +193,8 @@ function memory_size() {
 
 ## function Сбор итогов успешной установки
 function install_success() {
-  echo -e "Oracle database "
+  echo -e "Oracle database ${ORACLE_VERSION} установлена\n DB: ${STAND_CODE}\n SYS и SYSTEM пароли: welcome1"
+  su - oracle -c ""
 }
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#
