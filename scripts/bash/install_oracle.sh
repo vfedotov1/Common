@@ -56,8 +56,13 @@ DB_PASSWORD=${5:-'welcome1'}
 
 ## function Завершение при ошибке ##
 function error() {
-  echo -e "${red}FAILED${color_off}"
+  echo -e "\n${red}FAILED${color_off}\n"
   exit 1
+}
+
+## function Успешного статуса ##
+function success() {
+  echo -e "\n${green}SUCCESS${color_off}\n"
 }
 
 ## function Генерация списка файлов вебдав для загрузки и передачи их в WebDav функцию
@@ -67,10 +72,10 @@ function WebDav_file_list() {
 
 ## function WebDav для загрузки файлов установки ##
 function WebDav_download() {
-  echo -e "\n${cyan}######################################${color_off}"
-  echo -e "${green}Загрузка ${2} по WebDav в /tmp/${2}${color_off}\n"
-  echo -e "${yellow}curl -u "${webdav_username}:PASSWORD" ${webdav_url}${1}${2} --output /tmp/${2} --progress-bar | tee /dev/null${yellow}"
-  echo -e "${cyan}######################################${color_off}"
+  echo -e "\n${yellow}######################################${color_off}"
+  echo -e "${yellow}Загрузка ${2} по WebDav в /tmp/${2}${color_off}\n"
+  echo -e "${yellow}curl -u "${webdav_username}:PASSWORD" ${webdav_url}${1}${2} --output /tmp/${2} --progress-bar | tee /dev/null${color_off}"
+  echo -e "${yellow}######################################${color_off}"
   curl -u "${webdav_username}:${webdav_password}" ${webdav_url}${1}${2} --output /tmp/${2} --progress-bar | tee /dev/null
   }
 
@@ -207,7 +212,7 @@ function install_success() {
 ### function 19_3_db_install with installation steps ###
 ########################################################
 function 19_3_db_install() {
-echo -e "${green}ШАГ 1. as root. Установка пакетов, создание директорий, oracle_preinstall${color_off}\n"
+echo -e "${yellow}ШАГ 1. as root. Установка пакетов, создание директорий, oracle_preinstall${color_off}\n"
 {
 ORACLE_SID=${STAND_CODE}
 ORACLE_HOME=${DB_ROOT_DIR}/app/oracle/product/19.3.0.0
@@ -234,9 +239,9 @@ ORADIAG=${DB_ROOT_DIR}
       yum update -y && \
       yum clean all && \
       rm -rf /var/tmp/*
-} || error
+} && success || error
 
-echo -e "${green}ШАГ 2. as oracle. Создание ${STAND_CODE}.env файла${color_off}\n"
+echo -e "${yellow}ШАГ 2. as oracle. Создание ${STAND_CODE}.env файла${color_off}\n"
 su - oracle -c "echo -n \"export ORACLE_SID=${STAND_CODE}
 export ORACLE_HOME=${DB_ROOT_DIR}/app/oracle/product/19.3.0.0
 export TNS_ADMIN=\\\$ORACLE_HOME/network/admin
@@ -245,12 +250,12 @@ export ORACLE_BASE=${DB_ROOT_DIR}/app/oracle
 export ORADATA=${ORADATA}
 export ORADBCFG=${DB_ROOT_DIR}/dbconfig
 export ORAAUDIT=${DB_ROOT_DIR}/audit
-export ORADIAG=${DB_ROOT_DIR}\" > ${STAND_CODE}.env" && echo -e "${yellow}${STAND_CODE}.env cоздан${color_off}\n" || error
+export ORADIAG=${DB_ROOT_DIR}\" > ${STAND_CODE}.env" && echo -e "${yellow}${STAND_CODE}.env cоздан${color_off}\n" && success || error
 
-echo -e "${green}ШАГ 3. as oracle. Распаковка bin'арников${color_off}\n"
-su - oracle -c ". ./${STAND_CODE}.env && cd $ORACLE_BASE/product/19.3.0.0 && cp /tmp/LINUX.X64_193000_db_home.zip ./ && unzip LINUX.X64_193000_db_home.zip && rm -f LINUX.X64_193000_db_home.zip" || { echo 'FAILED' ; exit 1; }
+echo -e "${yellow}ШАГ 3. as oracle. Распаковка bin'арников${color_off}\n"
+su - oracle -c ". ./${STAND_CODE}.env && cd $ORACLE_BASE/product/19.3.0.0 && cp /tmp/LINUX.X64_193000_db_home.zip ./ && unzip LINUX.X64_193000_db_home.zip && rm -f LINUX.X64_193000_db_home.zip" && success || error
 
-echo -e "${green}ШАГ 4. as oracle. Создание response file для \"Тихой\" установки${color_off}\n"
+echo -e "${yellow}ШАГ 4. as oracle. Создание response file для \"Тихой\" установки${color_off}\n"
 su - oracle -c ". ./${STAND_CODE}.env && echo -n \"oracle.install.responseFileVersion=/oracle/install/rspfmt_dbinstall_response_schema_v19.0.0
 oracle.install.option=INSTALL_DB_AND_CONFIG
 UNIX_GROUP_NAME=oinstall
@@ -288,9 +293,9 @@ oracle.install.db.config.starterdb.storageType=FILE_SYSTEM_STORAGE
 oracle.install.db.config.starterdb.fileSystemStorage.dataLocation=/sgm/data
 oracle.install.db.config.starterdb.fileSystemStorage.recoveryLocation=
 oracle.install.db.config.asm.diskGroup=
-oracle.install.db.config.asm.ASMSNMPPassword=\" > ${ORACLE_HOME}/install/response/db_istall_${STAND_CODE}.rsp" || error
+oracle.install.db.config.asm.ASMSNMPPassword=\" > ${ORACLE_HOME}/install/response/db_istall_${STAND_CODE}.rsp" && success || error
 
-echo -e "${green}ШАГ 5. as oracle. Установка OracleSoftware and db через response file (silent mode)${color_off}\n"
+echo -e "${yellow}ШАГ 5. as oracle. Установка OracleSoftware and db через response file (silent mode)${color_off}\n"
 su - oracle -c ". ./${STAND_CODE}.env &&
 $ORACLE_HOME/runInstaller -ignorePrereq -waitforcompletion -silent             	  	\
     -responseFile ${ORACLE_HOME}/install/response/db_istall_${STAND_CODE}.rsp 	  	\
@@ -304,41 +309,41 @@ $ORACLE_HOME/runInstaller -ignorePrereq -waitforcompletion -silent             	
     oracle.install.db.config.starterdb.memoryLimit=${db_memory_size}                \
     oracle.install.db.config.starterdb.password.SYS=${DB_PASSWORD}                  \
     oracle.install.db.config.starterdb.password.SYSTEM=${DB_PASSWORD}               \
-    oracle.install.db.config.starterdb.fileSystemStorage.dataLocation=${ORADATA}"
+    oracle.install.db.config.starterdb.fileSystemStorage.dataLocation=${ORADATA}" && success || error
 
-echo -e "${green}ШАГ 6. as root then as oracle. Выполнение root'вых скриптов и продолжение установки ${color_off}\n"
-run_root_scripts || error
+echo -e "${yellow}ШАГ 6. as root then as oracle. Выполнение root'вых скриптов и продолжение установки ${color_off}\n"
+run_root_scripts && success || error
 
-echo -e "${green}ШАГ 7. Проверка установки БД${color_off}\n"
-check_install || error
+echo -e "${yellow}ШАГ 7. Проверка установки БД${color_off}\n"
+check_install && success || error
 
-echo -e "${green}ШАГ 8. Apply Patch 29935685 ${color_off}\n"
+echo -e "${yellow}ШАГ 8. Apply Patch 29935685 ${color_off}\n"
 
-echo -e "${green}ШАГ 8.1 Остановка listner'a и DB ${color_off}\n"
-stop_db_listener || error
+echo -e "${yellow}ШАГ 8.1 Остановка listner'a и DB ${color_off}\n"
+stop_db_listener && success || error
 
-echo -e "${green}ШАГ 8.2 Установка патча 29935685 ${color_off}\n"
+echo -e "${yellow}ШАГ 8.2 Установка патча 29935685 ${color_off}\n"
 su - oracle -c ". ./${STAND_CODE}.env && cd /opt/patches/ && cp /tmp/p29935685_193000DBRU_Linux-x86-64.zip ./ && unzip p29935685_193000DBRU_Linux-x86-64.zip && rm -rf p29935685_193000DBRU_Linux-x86-64.zip" || error
 su - oracle -c ". ./${STAND_CODE}.env && cd $ORACLE_HOME/OPatch && opatch apply -silent /opt/patches/29935685/" || error
 check_patch || error
 
-echo -e "${green}ШАГ 8.3 Старт listner'a и DB ${color_off}\n"
-start_db_listener || error
+echo -e "${yellow}ШАГ 8.3 Старт listner'a и DB ${color_off}\n"
+start_db_listener && success || error
 
-echo -e "${green}ШАГ 8. Фикс Bug 30591475 : ORA-7445:[KKOCFBMARKBINDFROCB]${color_off}\n"
+echo -e "${yellow}ШАГ 8. Фикс Bug 30591475 : ORA-7445:[KKOCFBMARKBINDFROCB]${color_off}\n"
 su - oracle -c ". ./${STAND_CODE}.env && sqlplus / as sysdba <<EOF
 alter system set \"_optimizer_join_elimination_enabled\" = FALSE;
 alter system set \"_fix_control\"='23210039:0';
 alter system set \"_complex_view_merging\" = FALSE;
-EOF" || error
+EOF" && success || error
 
-echo -e "${green}ШАГ 9. Добавление env файла в bash_profile${color_off}\n"
-env_bash_profile || error
+echo -e "${yellow}ШАГ 9. Добавление env файла в bash_profile${color_off}\n"
+env_bash_profile && success || error
 
-echo -e "${green}ШАГ 10. Добавление записей в sqlnet.ora для разрешения соединений с более старых версий jdbc драйверов + reset паролей для применения настроек${color_off}\n"
-jdbc8_allow || error
+echo -e "${yellow}ШАГ 10. Добавление записей в sqlnet.ora для разрешения соединений с более старых версий jdbc драйверов + reset паролей для применения настроек${color_off}\n"
+jdbc8_allow && success || error
 
-echo -e "${green}ШАГ 11. Open DB port and disable selinux${color_off}\n"
+echo -e "${yellow}ШАГ 11. Open DB port and disable selinux${color_off}\n"
 db_port_disable_selinux && install_success || error
 }
 
@@ -346,45 +351,48 @@ db_port_disable_selinux && install_success || error
 #\\\ УСТАНОВКА БД СОГЛАСНО СОГЛАСНО ЗАПРОШЕННОЙ ВЕРСИИ. 19.3 СТАВИТСЯ ПО ДЕФОЛТУ \\\#
 #\\ Выбирается согласно логике "if версия elif версия elif версия elif версия fi" \\#
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#
-echo -e "${cyan}######################################${color_off}"
-echo -e "${cyan}Установка Oracle Database ${ORACLE_VERSION}\nИмя базы: ${STAND_CODE}\nРасположение датафайлов: ${ORADATA}\nДиректория установки: ${DB_ROOT_DIR}${color_off}"
-echo -e "${cyan}######################################${color_off}\n"
-memory_size
+echo -e "${cyan}######################################"
+echo -e "Установка Oracle Database ${ORACLE_VERSION}\n"
+echo -e "Имя базы: ${STAND_CODE}\n"
+echo -e "Расположение датафайлов: ${ORADATA}\n"
+echo -e "Директория установки: ${DB_ROOT_DIR}"
+echo -e "######################################${color_off}\n"
+
+echo -e "${yellow}Вычисление объема памяти под БД${color_off}"
+memory_size && success || error
+
 ##########################################
 ########## Oracle Database 19.3 ##########
 ##########################################
 if [ "${ORACLE_VERSION}" == '19.3' ]
 then
-echo -e "${green}Установка переменных \$webdav_variable_prefix \$webdav_dir согласно входному аргументу ORACLE_VERSION=${ORACLE_VERSION}${color_off}\n"
-webdav_variable_prefix='oracle_19_3'
-webdav_dir=${oracle_19_3_webdav_dir}
-echo -e "${green}Загрузка файлов для установки с webdav сервера${color_off}\n"
-WebDav_file_list || error
-echo -e "${green}Вызов функции установки версии ${ORACLE_VERSION}${color_off}\n"
+echo -e "${yellow}Установка переменных \$webdav_variable_prefix \$webdav_dir согласно входному аргументу ORACLE_VERSION=${ORACLE_VERSION}${color_off}\n"
+webdav_variable_prefix='oracle_19_3' && webdav_dir=${oracle_19_3_webdav_dir} && success || error
+echo -e "${yellow}Загрузка файлов для установки с webdav сервера${color_off}\n"
+WebDav_file_list && success || error
+echo -e "${yellow}Вызов функции установки версии ${ORACLE_VERSION}${color_off}\n"
 19_3_db_install | tee /tmp/${db_install_log} 2>&1
 ##########################################
 ########## Oracle Database 18.10 #########
 ##########################################
 elif [ "${ORACLE_VERSION}" == '18.10' ]
 then
-echo -e "${green}Установка переменных \$webdav_variable_prefix \$webdav_dir согласно входному аргументу ORACLE_VERSION=${ORACLE_VERSION}${color_off}\n"
-webdav_variable_prefix='oracle_18_10'
-webdav_dir=${oracle_18_10_webdav_dir}
-echo -e "${green}Загрузка файлов для установки с webdav сервера${color_off}\n"
-WebDav_file_list || error
-echo -e "${green}Вызов функции установки версии ${ORACLE_VERSION}${color_off}\n"
+echo -e "${yellow}Установка переменных \$webdav_variable_prefix \$webdav_dir согласно входному аргументу ORACLE_VERSION=${ORACLE_VERSION}${color_off}\n"
+webdav_variable_prefix='oracle_18_10' && webdav_dir=${oracle_18_10_webdav_dir} && success || error
+echo -e "${yellow}Загрузка файлов для установки с webdav сервера${color_off}\n"
+WebDav_file_list && success || error
+echo -e "${yellow}Вызов функции установки версии ${ORACLE_VERSION}${color_off}\n"
 18_10_db_install | tee /tmp/${db_install_log} 2>&1
 #########################################
 ########## Oracle Database 18.3 #########
 #########################################
 elif [ "${ORACLE_VERSION}" == '18.3' ]
 then
-echo -e "${green}Установка переменных \$webdav_variable_prefix \$webdav_dir согласно входному аргументу ORACLE_VERSION=${ORACLE_VERSION}${color_off}\n"
-webdav_variable_prefix='oracle_18_3'
-webdav_dir=${oracle_18_3_webdav_dir}
-echo -e "${green}Загрузка файлов для установки с webdav сервера${color_off}\n"
-WebDav_file_list || error
-echo -e "${green}Вызов функции установки версии ${ORACLE_VERSION}${color_off}\n"
+echo -e "${yellow}Установка переменных \$webdav_variable_prefix \$webdav_dir согласно входному аргументу ORACLE_VERSION=${ORACLE_VERSION}${color_off}\n"
+webdav_variable_prefix='oracle_18_3' && webdav_dir=${oracle_18_3_webdav_dir} && success || error
+echo -e "${yellow}Загрузка файлов для установки с webdav сервера${color_off}\n"
+WebDav_file_list && success || error
+echo -e "${yellow}Вызов функции установки версии ${ORACLE_VERSION}${color_off}\n"
 18_3_db_install | tee /tmp/${db_install_log} 2>&1
 #########################################
 else
