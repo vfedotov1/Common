@@ -187,6 +187,11 @@ function memory_size() {
   db_memory_size=$((${memory_sise}*90/100))
 }
 
+## function Сбор итогов успешной установки
+function install_success() {
+echo -e "Oracle database "
+}
+
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#
 #\\ FUNCTIONS Установки версий БД \\#
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#
@@ -343,11 +348,11 @@ echo -e "${cyan}######################################${color_off}\n"
 ##########################################
 if [ "${ORACLE_VERSION}" == '19.3' ]
 then
-echo -e "${green}Установка переменных \$oracle_version \$webdav_dir согласно входному аргументу ORACLE_VERSION=${ORACLE_VERSION}${color_off}\n"
-ORACLE_VERSION='oracle_19_3'
+echo -e "${green}Установка переменных \$webdav_variable_prefix \$webdav_dir согласно входному аргументу ORACLE_VERSION=${ORACLE_VERSION}${color_off}\n"
+webdav_variable_prefix='oracle_19_3'
 webdav_dir=${oracle_19_3_webdav_dir}
 echo -e "${green}Загрузка файлов для установки с webdav сервера${color_off}\n"
-compgen -v | grep -i ${ORACLE_VERSION} | grep -v dir | while read variables; do WebDav ${webdav_dir} ${!variables}; done
+compgen -v | grep -i ${webdav_variable_prefix} | grep -v dir | while read variables; do WebDav ${webdav_dir} ${!variables}; done
 echo -e "${green}Вызов функции установки версии ${ORACLE_VERSION}${color_off}\n"
 memory_size && 19_3_db_install | tee /tmp/${db_install_log} 2>&1
 ##########################################
@@ -355,11 +360,11 @@ memory_size && 19_3_db_install | tee /tmp/${db_install_log} 2>&1
 ##########################################
 elif [ "${ORACLE_VERSION}" == '18.10' ]
 then
-echo -e "${green}Установка переменных \$oracle_version \$webdav_dir согласно входному аргументу ORACLE_VERSION=${ORACLE_VERSION}${color_off}\n"
-ORACLE_VERSION='oracle_18_10'
+echo -e "${green}Установка переменных \$webdav_variable_prefix \$webdav_dir согласно входному аргументу ORACLE_VERSION=${ORACLE_VERSION}${color_off}\n"
+webdav_variable_prefix='oracle_18_10'
 webdav_dir=${oracle_18_10_webdav_dir}
 echo -e "${green}Загрузка файлов для установки с webdav сервера${color_off}\n"
-compgen -v | grep -i ${ORACLE_VERSION} | grep -v dir | while read variables; do WebDav ${webdav_dir} ${!variables}; done
+compgen -v | grep -i ${webdav_variable_prefix} | grep -v dir | while read variables; do WebDav ${webdav_dir} ${!variables}; done
 echo -e "${green}Вызов функции установки версии ${ORACLE_VERSION}${color_off}\n"
 memory_size && 18_10_db_install | tee /tmp/${db_install_log} 2>&1
 #########################################
@@ -367,11 +372,11 @@ memory_size && 18_10_db_install | tee /tmp/${db_install_log} 2>&1
 #########################################
 elif [ "${ORACLE_VERSION}" == '18.3' ]
 then
-echo -e "${green}Установка переменных \$oracle_version \$webdav_dir согласно входному аргументу ORACLE_VERSION=${ORACLE_VERSION}${color_off}\n"
-ORACLE_VERSION='oracle_18_3'
+echo -e "${green}Установка переменных \$webdav_variable_prefix \$webdav_dir согласно входному аргументу ORACLE_VERSION=${ORACLE_VERSION}${color_off}\n"
+webdav_variable_prefix='oracle_18_3'
 webdav_dir=${oracle_18_3_webdav_dir}
 echo -e "${green}Загрузка файлов для установки с webdav сервера${color_off}\n"
-compgen -v | grep -i ${ORACLE_VERSION} | grep -v dir | while read variables; do WebDav ${webdav_dir} ${!variables}; done
+compgen -v | grep -i ${webdav_variable_prefix} | grep -v dir | while read variables; do WebDav ${webdav_dir} ${!variables}; done
 echo -e "${green}Вызов функции установки версии ${ORACLE_VERSION}${color_off}\n"
 memory_size && 18_3_db_install | tee /tmp/${db_install_log} 2>&1
 #########################################
