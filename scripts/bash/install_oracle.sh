@@ -239,8 +239,8 @@ ORADIAG=${DB_ROOT_DIR}
 echo -e "${green}ШАГ 2. as oracle. Создание ${STAND_CODE}.env файла${color_off}\n"
 su - oracle -c "echo -n \"export ORACLE_SID=${STAND_CODE}
 export ORACLE_HOME=${DB_ROOT_DIR}/app/oracle/product/19.3.0.0
-export TNS_ADMIN=\$ORACLE_HOME/network/admin
-export PATH=\$PATH:\$ORACLE_HOME/bin:\$ORACLE_HOME/OPatch
+export TNS_ADMIN=\\\$ORACLE_HOME/network/admin
+export PATH=\\\$PATH:\\\$ORACLE_HOME/bin:\\\$ORACLE_HOME/OPatch
 export ORACLE_BASE=${DB_ROOT_DIR}/app/oracle
 export ORADATA=${ORADATA}
 export ORADBCFG=${DB_ROOT_DIR}/dbconfig
