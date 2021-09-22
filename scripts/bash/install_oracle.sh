@@ -120,15 +120,6 @@ function run_root_scripts() {
   fi
 }
 
-## function Проверка завершения Opatch
-function check_patch() {
-  if grep -q "OPatch succeeded" ${db_install_log}; then
-      echo -e "${green}Патч установлен${color_off}"
-  else
-      echo -e "${red}Патч не установлен. Необходимо проверить лог выполнения.${color_off}"
-  fi
-}
-
 ## function Добавление записей в sqlnet.ora для разрешения соединений с более старых версий jdbc драйверов + reset паролей для применения настроек
 function jdbc8_allow() {
   su - oracle -c ". ./${STAND_CODE}.env && cat << EOF >> ${ORACLE_HOME}/network/admin/sqlnet.ora
@@ -167,12 +158,21 @@ function start_db_listener() {
   EOF"
 }
 
+## function Проверка завершения Opatch
+function check_patch() {
+  if grep -q "OPatch succeeded" ${db_install_log}; then
+      echo -e "${green}Патч установлен!${color_off}\n"
+  else
+      echo -e "${red}Патч не установлен. Необходимо проверить лог выполнения.${color_off}\n"
+  fi
+}
+
 ## function Проверка завершения runInstaller
 function check_install() {
   if grep -q "Successfully Configured Software" ${db_install_log}; then
-      echo -e "${green}БД ${STAND_CODE} установлена!${color_off}"
+      echo -e "${green}БД ${STAND_CODE} установлена!${color_off}\n"
   else
-      echo -e "${red}Необходимо проверить лог установки БД на ошибки и перезапустить скрипт после устранения${color_off}"
+      echo -e "${red}Необходимо проверить лог установки БД на ошибки и перезапустить скрипт после устранения${color_off}\n"
   fi
 }
 
