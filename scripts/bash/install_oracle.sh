@@ -56,13 +56,17 @@ DB_PASSWORD=${5:-'welcome1'}
 
 ## function Завершение при ошибке ##
 function error() {
-echo -e "${red}FAILED${color_off}"
-exit 1
+  echo -e "${red}FAILED${color_off}"
+  exit 1
 }
 
+## function Генерация списка файлов вебдав для загрузки и передачи их в WebDav функцию
+function WebDav_file_list() {
+  compgen -v | grep -i ${webdav_variable_prefix} | grep -v dir | while read variables; do WebDav_download ${webdav_dir} ${!variables}; done
+}
 
 ## function WebDav для загрузки файлов установки ##
-function WebDav() {
+function WebDav_download() {
   echo -e "\n${cyan}######################################${color_off}"
   echo -e "${green}Загрузка ${2} по WebDav в /tmp/${2}${color_off}\n"
   echo -e "${yellow}curl -u "${webdav_username}:PASSWORD" ${webdav_url}${1}${2} --output /tmp/${2} --progress-bar | tee /dev/null${yellow}"
@@ -189,7 +193,7 @@ function memory_size() {
 
 ## function Сбор итогов успешной установки
 function install_success() {
-echo -e "Oracle database "
+  echo -e "Oracle database "
 }
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#
@@ -352,7 +356,7 @@ echo -e "${green}Установка переменных \$webdav_variable_prefi
 webdav_variable_prefix='oracle_19_3'
 webdav_dir=${oracle_19_3_webdav_dir}
 echo -e "${green}Загрузка файлов для установки с webdav сервера${color_off}\n"
-compgen -v | grep -i ${webdav_variable_prefix} | grep -v dir | while read variables; do WebDav ${webdav_dir} ${!variables}; done
+WebDav_file_list || error
 echo -e "${green}Вызов функции установки версии ${ORACLE_VERSION}${color_off}\n"
 memory_size && 19_3_db_install | tee /tmp/${db_install_log} 2>&1
 ##########################################
@@ -364,7 +368,7 @@ echo -e "${green}Установка переменных \$webdav_variable_prefi
 webdav_variable_prefix='oracle_18_10'
 webdav_dir=${oracle_18_10_webdav_dir}
 echo -e "${green}Загрузка файлов для установки с webdav сервера${color_off}\n"
-compgen -v | grep -i ${webdav_variable_prefix} | grep -v dir | while read variables; do WebDav ${webdav_dir} ${!variables}; done
+WebDav_file_list || error
 echo -e "${green}Вызов функции установки версии ${ORACLE_VERSION}${color_off}\n"
 memory_size && 18_10_db_install | tee /tmp/${db_install_log} 2>&1
 #########################################
@@ -376,7 +380,7 @@ echo -e "${green}Установка переменных \$webdav_variable_prefi
 webdav_variable_prefix='oracle_18_3'
 webdav_dir=${oracle_18_3_webdav_dir}
 echo -e "${green}Загрузка файлов для установки с webdav сервера${color_off}\n"
-compgen -v | grep -i ${webdav_variable_prefix} | grep -v dir | while read variables; do WebDav ${webdav_dir} ${!variables}; done
+WebDav_file_list || error
 echo -e "${green}Вызов функции установки версии ${ORACLE_VERSION}${color_off}\n"
 memory_size && 18_3_db_install | tee /tmp/${db_install_log} 2>&1
 #########################################
