@@ -349,7 +349,7 @@ db_port_disable_selinux && install_success || error
 echo -e "${cyan}######################################${color_off}"
 echo -e "${cyan}Установка Oracle Database ${ORACLE_VERSION}\nИмя базы: ${STAND_CODE}\nРасположение датафайлов: ${ORADATA}\nДиректория установки: ${DB_ROOT_DIR}${color_off}"
 echo -e "${cyan}######################################${color_off}\n"
-
+memory_size
 ##########################################
 ########## Oracle Database 19.3 ##########
 ##########################################
@@ -361,7 +361,7 @@ webdav_dir=${oracle_19_3_webdav_dir}
 echo -e "${green}Загрузка файлов для установки с webdav сервера${color_off}\n"
 WebDav_file_list || error
 echo -e "${green}Вызов функции установки версии ${ORACLE_VERSION}${color_off}\n"
-memory_size && 19_3_db_install | tee /tmp/${db_install_log} 2>&1
+19_3_db_install | tee /tmp/${db_install_log} 2>&1
 ##########################################
 ########## Oracle Database 18.10 #########
 ##########################################
@@ -373,7 +373,7 @@ webdav_dir=${oracle_18_10_webdav_dir}
 echo -e "${green}Загрузка файлов для установки с webdav сервера${color_off}\n"
 WebDav_file_list || error
 echo -e "${green}Вызов функции установки версии ${ORACLE_VERSION}${color_off}\n"
-memory_size && 18_10_db_install | tee /tmp/${db_install_log} 2>&1
+18_10_db_install | tee /tmp/${db_install_log} 2>&1
 #########################################
 ########## Oracle Database 18.3 #########
 #########################################
@@ -385,7 +385,7 @@ webdav_dir=${oracle_18_3_webdav_dir}
 echo -e "${green}Загрузка файлов для установки с webdav сервера${color_off}\n"
 WebDav_file_list || error
 echo -e "${green}Вызов функции установки версии ${ORACLE_VERSION}${color_off}\n"
-memory_size && 18_3_db_install | tee /tmp/${db_install_log} 2>&1
+18_3_db_install | tee /tmp/${db_install_log} 2>&1
 #########################################
 else
 echo -e "${red}Некорректно указана версия Oracle Database - ${ORACLE_VERSION}. Необходимо выбрать одну из следующих версий:{color_off}"
