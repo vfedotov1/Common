@@ -28,7 +28,7 @@ function killvms() {
 # kill all vm via vagrantdestroy otherwise
 killvms
 #vagrant global-status | grep virtualbox | awk '{print $1}' | xargs vagrant destroy -f || killvms
-rm -rf vagrant/ Common/ && git clone https://github.com/vfedotov1/Common.git && mv Common/vagrant ./ && rm -rf Common/ && chmod +x vagrant/*sh && cd vagrant && vagrant up && ./vmconnect.sh
+rm -rf vagrant/ Common/ && git clone https://github.com/vfedotov1/Common.git && mv Common/vagrant ./ && rm -rf Common/ && chmod +x vagrant/*sh && cd vagrant
 }
 
 ###############
