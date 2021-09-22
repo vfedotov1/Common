@@ -352,9 +352,9 @@ db_port_disable_selinux && install_success || error
 #\\ Выбирается согласно логике "if версия elif версия elif версия elif версия fi" \\#
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#
 echo -e "${cyan}######################################"
-echo -e "Установка Oracle Database ${ORACLE_VERSION}\n"
-echo -e "Имя базы: ${STAND_CODE}\n"
-echo -e "Расположение датафайлов: ${ORADATA}\n"
+echo -e "Установка Oracle Database ${ORACLE_VERSION}"
+echo -e "Имя базы: ${STAND_CODE}"
+echo -e "Расположение датафайлов: ${ORADATA}"
 echo -e "Директория установки: ${DB_ROOT_DIR}"
 echo -e "######################################${color_off}\n"
 
