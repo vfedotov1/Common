@@ -339,9 +339,7 @@ echo -e "${green}ШАГ 10. Добавление записей в sqlnet.ora д
 jdbc8_allow || error
 
 echo -e "${green}ШАГ 11. Open DB port and disable selinux${color_off}\n"
-db_port_disable_selinux || error
-
-install_success
+db_port_disable_selinux && install_success || error
 }
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#
