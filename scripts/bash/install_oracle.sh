@@ -193,8 +193,10 @@ function memory_size() {
 
 ## function Сбор итогов успешной установки
 function install_success() {
+  echo -e "================================================================================================="
   echo -e "Oracle database ${ORACLE_VERSION} установлена\n DB: ${STAND_CODE}\n SYS и SYSTEM пароли: welcome1"
   su - oracle -c ""
+  echo -e "================================================================================================="
 }
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#
@@ -338,6 +340,8 @@ jdbc8_allow || error
 
 echo -e "${green}ШАГ 11. Open DB port and disable selinux${color_off}\n"
 db_port_disable_selinux || error
+
+install_success
 }
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#
