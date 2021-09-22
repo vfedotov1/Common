@@ -16,9 +16,9 @@ db_version_list='18.3\n18.10\n19.3'
 db_install_log=tmp_db_install_$(date +"%d_%m_%Y__%H_%M").log
 
 ##################### webdav common ####################
-webdav_username='eb_owncloud'
+webdav_username='admin_owncloud'
 webdav_password='123'
-webdav_url='https://oc.sigma-it.ru/owncloud/remote.php/dav/files/eb_admin/'
+webdav_url='https://oc.company-it.ru/owncloud/remote.php/dav/files/eb_admin/'
 
 ################# Oracle Database 18.3 #################
 ## webdav директория где хранится Oracle Database 18.3
