@@ -323,7 +323,7 @@ echo -e "${yellow}ШАГ 8.1 Остановка listner'a и DB ${color_off}\n"
 stop_db_listener && success || error
 
 echo -e "${yellow}ШАГ 8.2 Установка патча 29935685 ${color_off}\n"
-su - oracle -c ". ./${STAND_CODE}.env && cd /opt/patches/ && cp /tmp/p29935685_193000DBRU_Linux-x86-64.zip ./ && unzip p29935685_193000DBRU_Linux-x86-64.zip && rm -rf p29935685_193000DBRU_Linux-x86-64.zip" || error
+su - oracle -c ". ./${STAND_CODE}.env && mkdir -p /opt/patches/ && cd /opt/patches/ && cp /tmp/p29935685_193000DBRU_Linux-x86-64.zip ./ && unzip p29935685_193000DBRU_Linux-x86-64.zip && rm -rf p29935685_193000DBRU_Linux-x86-64.zip" || error
 su - oracle -c ". ./${STAND_CODE}.env && cd $ORACLE_HOME/OPatch && opatch apply -silent /opt/patches/29935685/" || error
 check_patch || error
 
