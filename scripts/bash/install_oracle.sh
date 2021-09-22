@@ -152,15 +152,14 @@ function env_bash_profile() {
   function stop_db_listener() {
   su - oracle -c ". ./${STAND_CODE}.env && lsnrctl stop && sqlplus / as sysdba <<EOF
   shu immediate;
-  EOF"
+EOF"
 }
 
 ## function Старт listner'a и DB
 function start_db_listener() {
   su - oracle -c ". ./${STAND_CODE}.env && sqlplus / as sysdba <<EOF
   startup;
-  EOF && lsnrctl start
-  EOF"
+EOF && lsnrctl start"
 }
 
 ## function Проверка завершения Opatch
