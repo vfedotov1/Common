@@ -128,37 +128,37 @@ function run_root_scripts() {
 ## function Добавление записей в sqlnet.ora для разрешения соединений с более старых версий jdbc драйверов + reset паролей для применения настроек
 function jdbc8_allow() {
   su - oracle -c ". ./${STAND_CODE}.env && cat << EOF >> ${ORACLE_HOME}/network/admin/sqlnet.ora
-  SQLNET.ALLOWED_LOGON_VERSION=8
-  SQLNET.ALLOWED_LOGON_VERSION_CLIENT=8
-  SQLNET.ALLOWED_LOGON_VERSION_SERVER=8
+SQLNET.ALLOWED_LOGON_VERSION=8
+SQLNET.ALLOWED_LOGON_VERSION_CLIENT=8
+SQLNET.ALLOWED_LOGON_VERSION_SERVER=8
 EOF"
   su - oracle -c ". ./${STAND_CODE}.env && sqlplus / as sysdba << EOF
-  alter user sys identified by welcome1;
-  alter user system identified by welcome1;
+alter user sys identified by welcome1;
+alter user system identified by welcome1;
 EOF"
 }
 
 ## function Добавление env файла в bash_profile
 function env_bash_profile() {
   su - oracle -c "cat << EOF >> ~/.bash_profile
-  echo -e \"\nThe enviroment ${STAND_CODE}.env has been set:\n---------------------------\"
-  cat ~/${STAND_CODE}.env
-  . ./${STAND_CODE}.env
-  echo -e \"\n---------------------------\n\"
+echo -e \"\nThe enviroment ${STAND_CODE}.env has been set:\n---------------------------\"
+cat ~/${STAND_CODE}.env
+. ./${STAND_CODE}.env
+echo -e \"\n---------------------------\n\"
 EOF"
 }
 
 ## function Остановка listner'a и DB
   function stop_db_listener() {
   su - oracle -c ". ./${STAND_CODE}.env && lsnrctl stop && sqlplus / as sysdba <<EOF
-  shu immediate;
+shu immediate;
 EOF"
 }
 
 ## function Старт listner'a и DB
 function start_db_listener() {
   su - oracle -c ". ./${STAND_CODE}.env && sqlplus / as sysdba <<EOF
-  startup;
+startup;
 EOF"
   su - oracle -c  ". ./*.env && lsnrctl start"
 }
@@ -184,11 +184,11 @@ function check_install() {
 
 ## function Open DB port and disable selinux
 function db_port_disable_selinux() {
-  setenforce 0
-  sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/sysconfig/selinux
-  db_port=(su - oracle -c ". ./${STAND_CODE}.env && lsnrctl status | grep -i PORT | head -1 | grep -o '[[:digit:]]*'")
-  firewall-cmd --zone=public --add-port=${db_port}/tcp --permanent
-  firewall-cmd --reload
+  setenforce 0 &&
+  sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/sysconfig/selinux &&
+  db_port=(su - oracle -c ". ./${STAND_CODE}.env && lsnrctl status | grep -i PORT | head -1 | grep -o '[[:digit:]]*'") &&
+  firewall-cmd --zone=public --add-port=${db_port}/tcp --permanent &&
+  firewall-cmd --reload || echo -e "${red}Порт не был открыт или FirewallD не запущен\nНеобходимо проверить вручную!\n${color_off}"
 }
 
 ## function Вычисление размера памяти для бд в размере 90% от общей памяти сервера. в mb
