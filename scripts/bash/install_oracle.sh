@@ -199,10 +199,19 @@ function memory_size() {
 
 ## function Сбор итогов успешной установки
 function install_success() {
-  echo -e "================================================================================================="
-  echo -e "Oracle database ${ORACLE_VERSION} установлена\n DB: ${STAND_CODE}\n SYS и SYSTEM пароли: welcome1"
-  su - oracle -c ""
-  echo -e "================================================================================================="
+  echo -e "${cyan}====================================================================\n"
+  echo -e "Oracle database ${ORACLE_VERSION} установлена\n"
+  echo -e "TNS БД:
+  ${STAND_CODE}  =
+  (DESCRIPTION =
+    (ADDRESS = (PROTOCOL = TCP)(HOST = $(hostname))(PORT = ${db_port}))
+    (CONNECT_DATA =
+      (SERVER = DEDICATED)
+      (SERVICE_NAME = ${STAND_CODE})
+    )
+  )"
+  echo -e "SYS и SYSTEM пароли: welcome1"
+  echo -e "====================================================================${color_off}\n"
 }
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\#
@@ -339,11 +348,11 @@ alter system set \"_fix_control\"='23210039:0';
 alter system set \"_complex_view_merging\" = FALSE;
 EOF" && success || error
 
-echo -e "${yellow}ШАГ 9. Добавление env файла в bash_profile${color_off}\n"
-env_bash_profile && success || error
-
-echo -e "${yellow}ШАГ 10. Добавление записей в sqlnet.ora для разрешения соединений с более старых версий jdbc драйверов + reset паролей для применения настроек${color_off}\n"
+echo -e "${yellow}ШАГ 9. Добавление записей в sqlnet.ora для разрешения соединений с более старых версий jdbc драйверов + reset паролей для применения настроек${color_off}\n"
 jdbc8_allow && success || error
+
+echo -e "${yellow}ШАГ 10. Добавление env файла в bash_profile${color_off}\n"
+env_bash_profile && success || error
 
 echo -e "${yellow}ШАГ 11. Open DB port and disable selinux${color_off}\n"
 db_port_disable_selinux && install_success || error
