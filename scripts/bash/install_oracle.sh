@@ -188,7 +188,7 @@ function db_port_disable_selinux() {
   sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/sysconfig/selinux &&
   db_port=(su - oracle -c ". ./${STAND_CODE}.env && lsnrctl status | grep -i PORT | head -1 | grep -o '[[:digit:]]*'") &&
   firewall-cmd --zone=public --add-port=${db_port}/tcp --permanent &&
-  firewall-cmd --reload || echo -e "${red}Порт не был открыт или FirewallD не запущен\nНеобходимо проверить вручную!\n${color_off}"
+  firewall-cmd --reload || echo -e "${red}Порт ${db_port} не был открыт или FirewallD не запущен\nНеобходимо проверить вручную!\n${color_off}"
 }
 
 ## function Вычисление размера памяти для бд в размере 90% от общей памяти сервера. в mb
@@ -199,7 +199,7 @@ function memory_size() {
 
 ## function Сбор итогов успешной установки
 function install_success() {
-  echo -e "${cyan}====================================================================\n"
+  echo -e "${cyan}===================================================================="
   echo -e "Oracle database ${ORACLE_VERSION} установлена\n"
   echo -e "TNS БД:
   ${STAND_CODE}  =
@@ -209,7 +209,7 @@ function install_success() {
       (SERVER = DEDICATED)
       (SERVICE_NAME = ${STAND_CODE})
     )
-  )"
+  )\n"
   echo -e "SYS и SYSTEM пароли: welcome1"
   echo -e "====================================================================${color_off}\n"
 }
